@@ -26,7 +26,7 @@ class TestCrtShAPI:
         parsed_mock_github_response,
         mock_github_domains,
     ):
-        # Mock API._query_crtsh to prevent an HTTP request from being
+        # Mock API._query_service to prevent an HTTP request from being
         # made to crt.sh when calling API.fetch
         mocker.patch(
             "reconlib.crtsh.api.API._query_service", return_value=mock_github_response
