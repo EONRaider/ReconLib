@@ -15,7 +15,7 @@ def mock_github_response():
 
 @pytest.fixture
 def mock_github_domains():
-    return (
+    return {
         "skyline.github.com",
         "*.proxima-review-lab.github.com",
         "*.registry.github.com",
@@ -27,7 +27,7 @@ def mock_github_domains():
         "partnerportal.github.com",
         "import2.github.com",
         "api.stars.github.com",
-    )
+    }
 
 
 @pytest.fixture
