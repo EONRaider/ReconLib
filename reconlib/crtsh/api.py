@@ -1,5 +1,4 @@
 import json
-from typing import Any
 from urllib.request import Request, urlopen
 
 from reconlib.utils.user_agents import random_user_agent
@@ -66,12 +65,12 @@ class API:
         return len(self.results)
 
     @property
-    def found_domains(self) -> tuple[Any, ...]:
+    def found_domains(self) -> set[str]:
         """
-        Tuple containing strings defining each domain returned by a
+        Set containing strings defining each domain returned by a
         query to crt.sh
         """
-        return tuple(result["common_name"] for result in self.results)
+        return {result["common_name"] for result in self.results}
 
     def _query_service(self) -> str:
         """
