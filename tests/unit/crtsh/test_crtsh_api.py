@@ -8,14 +8,16 @@ class TestCrtShAPI:
         assert crtsh.include_expired is True
         assert crtsh.encoding == "utf_8"
 
-        assert crtsh.search_url == "https://crt.sh/?q=%.test.domain.abc&output=json"
+        assert (
+            crtsh.get_query_url() == "https://crt.sh/?q=%.test.domain.abc&output=json"
+        )
 
         crtsh.wildcard = False
-        assert crtsh.search_url == "https://crt.sh/?q=test.domain.abc&output=json"
+        assert crtsh.get_query_url() == "https://crt.sh/?q=test.domain.abc&output=json"
 
         crtsh.include_expired = False
         assert (
-            crtsh.search_url
+            crtsh.get_query_url()
             == "https://crt.sh/?q=test.domain.abc&output=json&exclude=expired"
         )
 
