@@ -1,5 +1,8 @@
 from ipaddress import IPv4Address
 
+import pytest
+
+from reconlib.core.exceptions import InvalidTargetError
 from reconlib.hackertarget import API
 from reconlib.hackertarget.api import HackerTarget
 
@@ -95,3 +98,13 @@ class TestHackerTargetAPI:
         assert domain_info.reverse_dns() == {
             IPv4Address("140.82.121.9"): "lb-140-82-121-9-fra.github.com"
         }
+
+    def test_invalid_reverse_dns(self):
+        invalid_target = "github.com"
+        with pytest.raises(InvalidTargetError) as e:
+            API(target=invalid_target).reverse_dns()
+        assert (
+            str(e.value.message) == f"InvalidTargetError: '{invalid_target}' does not "
+            f"appear to be an IPv4 or IPv6 address"
+        )
+        assert e.value.code == 1

@@ -5,6 +5,7 @@ from urllib.parse import urlencode, urlparse, urlunparse
 from urllib.request import Request, urlopen
 
 from reconlib.core.base import ExternalService
+from reconlib.core.exceptions import InvalidTargetError
 from reconlib.utils.user_agents import random_user_agent
 
 
@@ -119,8 +120,20 @@ class API(ExternalService):
         return self.dns_records
 
     def reverse_dns(self) -> dict[[IPv4Address, IPv6Address], str]:
+        """
+        Send an HTTP request to HackerTarget's "reverse_dns" API endpoint
+        and fetch the results
+
+        :return: A dictionary mapping the supplied IP address to a
+            resolved hostname
+        """
+        try:
+            target_addr = ip_address(self.target)
+        except ValueError as e:
+            raise InvalidTargetError(str(e))
+
         query_url = self.get_query_url(
-            endpoint=HackerTarget.REVERSEDNS, params={"q": self.target}
+            endpoint=HackerTarget.REVERSEDNS, params={"q": target_addr}
         )
         ip_addr, domain = self._query_service(url=query_url).rstrip().split(" ")
         ip_addr = ip_address(ip_addr)
