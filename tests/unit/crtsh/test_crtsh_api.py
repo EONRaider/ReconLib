@@ -3,7 +3,7 @@ from reconlib.crtsh import API
 
 class TestCrtShAPI:
     def test_init_crtsh_api(self):
-        crtsh = API(domain="test.domain.abc")
+        crtsh = API(target="test.domain.abc")
         assert crtsh.wildcard is True
         assert crtsh.include_expired is True
         assert crtsh.encoding == "utf_8"
@@ -32,7 +32,7 @@ class TestCrtShAPI:
             "reconlib.crtsh.api.API._query_service", return_value=mock_github_response
         )
 
-        domain_info = API(domain="github.com")
+        domain_info = API(target="github.com")
         domain_info.fetch()
 
         assert domain_info.results == parsed_mock_github_response
