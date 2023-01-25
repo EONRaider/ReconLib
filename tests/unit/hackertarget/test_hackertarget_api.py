@@ -1,4 +1,4 @@
-from ipaddress import IPv4Address
+from ipaddress import IPv4Address, IPv4Network
 
 import pytest
 
@@ -103,6 +103,37 @@ class TestHackerTargetAPI:
         invalid_target = "github.com"
         with pytest.raises(InvalidTargetError) as e:
             API(target=invalid_target).reverse_dns()
+        assert (
+            str(e.value.message) == f"InvalidTargetError: '{invalid_target}' does not "
+            f"appear to be an IPv4 or IPv6 address"
+        )
+        assert e.value.code == 1
+
+    def test_aslookup(self, mocker, hackertarget_aslookup_github_response):
+        # Mock API._query_service to prevent an HTTP request from being
+        # made to api.hackertarget.com
+        mocker.patch(
+            "reconlib.hackertarget.api.API._query_service",
+            return_value=hackertarget_aslookup_github_response,
+        )
+        domain_info = API(target="140.82.121.9")
+        assert domain_info.aslookup() == {
+            "ASN": 36459,
+            "IP_ADDRESS": IPv4Address("140.82.114.27"),
+            "NETWORK": IPv4Network("140.82.114.0/24"),
+            "OWNER": "GITHUB, US",
+        }
+        assert domain_info.asn == {
+            36459: {
+                "NETWORK": IPv4Network("140.82.114.0/24"),
+                "OWNER": "GITHUB, US",
+            }
+        }
+
+    def test_invalid_aslookup(self):
+        invalid_target = "github.com"
+        with pytest.raises(InvalidTargetError) as e:
+            API(target=invalid_target).aslookup()
         assert (
             str(e.value.message) == f"InvalidTargetError: '{invalid_target}' does not "
             f"appear to be an IPv4 or IPv6 address"

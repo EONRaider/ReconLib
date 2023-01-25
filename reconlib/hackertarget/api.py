@@ -1,6 +1,8 @@
+import re
 from collections import defaultdict
 from enum import Enum
-from ipaddress import ip_address, IPv6Address, IPv4Address
+from ipaddress import ip_address, IPv6Address, IPv4Address, IPv4Network
+from typing import Any
 from urllib.parse import urlencode, urlparse, urlunparse
 from urllib.request import Request, urlopen
 
@@ -17,6 +19,7 @@ class HackerTarget(Enum):
     HOSTSEARCH = "hostsearch"
     DNSLOOKUP = "dnslookup"
     REVERSEDNS = "reversedns"
+    ASLOOKUP = "aslookup"
 
 
 class API(ExternalService):
@@ -44,6 +47,7 @@ class API(ExternalService):
         self.found_domains = defaultdict(set)
         self.hosts = defaultdict(dict)
         self.dns_records = defaultdict(dict)
+        self.asn = defaultdict(dict)
 
     def get_query_url(self, endpoint: HackerTarget, params: dict = None) -> str:
         """
@@ -137,3 +141,34 @@ class API(ExternalService):
         self.found_domains[self.target].add(domain)
         self.found_ip_addrs[self.target].add(ip_addr)
         return {ip_addr: domain}
+
+    def aslookup(self) -> dict[str, Any]:
+        """
+        Send an HTTP request to HackerTarget's "aslookup" API endpoint
+        and fetch the results
+
+        :return: A dictionary mapping the lookup results (IP address,
+            ASN, network address space and owner) to their respective
+            values
+        """
+        query_url = self.get_query_url(
+            endpoint=HackerTarget.ASLOOKUP,
+            params={"q": validate_ip_address(self.target)},
+        )
+        response = re.match(
+            r"^\"(?P<ip_addr>.+)\",\"(?P<asn>.+)\",\"(?P<network>.+)\","
+            r"\"(?P<owner>.+)\"$",
+            self._query_service(url=query_url).rstrip(),
+        )
+        self.asn[(asn := int(response.group("asn")))].update(
+            {
+                "NETWORK": (network := IPv4Network(response.group("network"))),
+                "OWNER": (owner := response.group("owner")),
+            }
+        )
+        return {
+            "IP_ADDRESS": ip_address(response.group("ip_addr")),
+            "ASN": asn,
+            "NETWORK": network,
+            "OWNER": owner,
+        }

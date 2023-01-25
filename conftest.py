@@ -259,3 +259,8 @@ def hackertarget_dnslookup_github_response():
 @pytest.fixture
 def hackertarget_reversedns_github_response():
     return "140.82.121.9 lb-140-82-121-9-fra.github.com"
+
+
+@pytest.fixture
+def hackertarget_aslookup_github_response():
+    return '"140.82.114.27","36459","140.82.114.0/24","GITHUB, US"'
