@@ -11,6 +11,7 @@ from reconlib.utils.user_agents import random_user_agent
 class HackerTarget(Enum):
     """Enumeration of API endpoints made available by HackerTarget"""
 
+    URL = urlparse("https://api.hackertarget.com")
     HOSTSEARCH = "hostsearch"
     DNSLOOKUP = "dnslookup"
     REVERSEDNS = "reversedns"
@@ -22,12 +23,10 @@ class API(ExternalService):
         target: str,
         *,
         user_agent: str = None,
-        hackertarget_url: str = "https://api.hackertarget.com",
         encoding: str = "utf_8",
     ):
         super().__init__(target)
         self.user_agent = user_agent
-        self.hackertarget_url = urlparse(hackertarget_url)
         self.encoding = encoding
         self.found_ip_addrs = defaultdict(set)
         self.found_domains = defaultdict(set)
@@ -46,8 +45,8 @@ class API(ExternalService):
         """
         return urlunparse(
             (
-                self.hackertarget_url.scheme,
-                self.hackertarget_url.netloc,
+                HackerTarget.URL.value.scheme,
+                HackerTarget.URL.value.netloc,
                 f"{endpoint.value}/",
                 "",
                 urlencode(params) if params else "",
