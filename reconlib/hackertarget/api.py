@@ -28,8 +28,8 @@ class API(ExternalService):
         self.user_agent = user_agent
         self.hackertarget_url = urlparse(hackertarget_url)
         self.encoding = encoding
-        self.found_ip_addrs = defaultdict(list)
-        self.found_domains = defaultdict(list)
+        self.found_ip_addrs = defaultdict(set)
+        self.found_domains = defaultdict(set)
         self.hostsearch_results = defaultdict(dict)
         self.dns_records = defaultdict(dict)
 
@@ -87,8 +87,8 @@ class API(ExternalService):
             domain, ip_addr = result.split(",")
             ip_addr = ip_address(ip_addr)
             self.hostsearch_results[self.target].update({ip_addr: domain})
-            self.found_domains[self.target].append(domain)
-            self.found_ip_addrs[self.target].append(ip_addr)
+            self.found_domains[self.target].add(domain)
+            self.found_ip_addrs[self.target].add(ip_addr)
         return self.hostsearch_results
 
     def dnslookup(self) -> dict[str, dict]:

@@ -38,22 +38,22 @@ class TestHackerTargetAPI:
             }
         }
         assert domain_info.found_domains == {
-            "github.com": [
+            "github.com": {
                 "lb-140-82-121-9-fra.github.com",
                 "lb-192-30-255-117-sea.github.com",
                 "lb-140-82-114-27-iad.github.com",
                 "out-23.smtp.github.com",
                 "o1.sgmail.github.com",
-            ]
+            }
         }
         assert domain_info.found_ip_addrs == {
-            "github.com": [
+            "github.com": {
                 IPv4Address("140.82.121.9"),
                 IPv4Address("192.30.255.117"),
                 IPv4Address("140.82.114.27"),
                 IPv4Address("192.30.252.206"),
                 IPv4Address("192.254.114.176"),
-            ]
+            }
         }
 
     def test_dns_lookup(self, mocker, hackertarget_dnslookup_github_response):
