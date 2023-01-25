@@ -1,4 +1,4 @@
-import urllib.parse
+from collections import defaultdict
 from enum import Enum
 from ipaddress import ip_address, IPv4Address, IPv6Address
 from urllib.parse import urlencode, urlparse, urlunparse
@@ -12,6 +12,7 @@ class HackerTarget(Enum):
     """Enumeration of API endpoints made available by HackerTarget"""
 
     HOSTSEARCH = "hostsearch"
+    DNSLOOKUP = "dnslookup"
 
 
 class API(ExternalService):
@@ -30,6 +31,7 @@ class API(ExternalService):
         self.found_domains: dict[str, list[str]] = dict()
         self.found_ip_addrs: dict[str:[IPv4Address, IPv6Address]] = dict()
         self.hostsearch_results: dict[[IPv4Address, IPv6Address]:str] = dict()
+        self.dns_records: dict[str, [list[str]]] = defaultdict(list)
 
     def get_query_url(self, endpoint: HackerTarget, params: dict = None) -> str:
         return urlunparse(
@@ -79,3 +81,20 @@ class API(ExternalService):
         self.found_domains.update({self.target: [*self.hostsearch_results.values()]})
         self.found_ip_addrs.update({self.target: [*self.hostsearch_results.keys()]})
         return self.hostsearch_results
+
+    def dnslookup(self) -> dict[str, list[str]]:
+        """
+        Send an HTTP request to HackerTarget's "dnslookup" API endpoint
+        and fetch the results
+
+        :return: A dictionary mapping each known DNS registry entry to
+            a list of known values.
+        """
+        query_url = self.get_query_url(
+            endpoint=HackerTarget.DNSLOOKUP, params={"q": self.target}
+        )
+        response = self._query_service(url=query_url)
+        for result in response.rstrip().split("\n"):
+            entry, value = result.split(" : ")
+            self.dns_records[entry].append(value)
+        return dict(self.dns_records)

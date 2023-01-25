@@ -53,3 +53,26 @@ class TestHackerTargetAPI:
                 IPv4Address("192.254.114.176"),
             ]
         }
+
+    def test_dns_lookup(self, mocker, hackertarget_dnslookup_github_response):
+        # Mock API._query_service to prevent an HTTP request from being
+        # made to api.hackertarget.com
+        mocker.patch(
+            "reconlib.hackertarget.api.API._query_service",
+            return_value=hackertarget_dnslookup_github_response,
+        )
+        domain_info = API(target="github.com")
+        assert domain_info.dnslookup() == {
+            "A": ["140.82.113.4"],
+            "MX": [
+                "1 aspmx.l.google.com.",
+                "10 alt3.aspmx.l.google.com.",
+                "10 alt4.aspmx.l.google.com.",
+            ],
+            "NS": ["dns1.p08.nsone.net.", "dns2.p08.nsone.net."],
+            "SOA": [
+                "dns1.p08.nsone.net. hostmaster.nsone.net. 1656468023 43200 7200 "
+                "1209600 3600"
+            ],
+            "TXT": ['"MS=6BF03E6AF5CB689E315FB6199603BABF2C88D805"', '"MS=ms44452932"'],
+        }

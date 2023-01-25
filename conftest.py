@@ -170,3 +170,18 @@ def hackertarget_hostsearch_github_response():
         "out-23.smtp.github.com,192.30.252.206\n"
         "o1.sgmail.github.com,192.254.114.176\n"
     )
+
+
+@pytest.fixture
+def hackertarget_dnslookup_github_response():
+    return (
+        "A : 140.82.113.4\n"
+        "MX : 1 aspmx.l.google.com.\n"
+        "MX : 10 alt3.aspmx.l.google.com.\n"
+        "MX : 10 alt4.aspmx.l.google.com.\n"
+        "NS : dns1.p08.nsone.net.\n"
+        "NS : dns2.p08.nsone.net.\n"
+        'TXT : "MS=6BF03E6AF5CB689E315FB6199603BABF2C88D805"\n'
+        'TXT : "MS=ms44452932"\n'
+        "SOA : dns1.p08.nsone.net. hostmaster.nsone.net. 1656468023 43200 7200 1209600 3600\n"
+    )
