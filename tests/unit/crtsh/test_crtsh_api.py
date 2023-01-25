@@ -22,19 +22,19 @@ class TestCrtShAPI:
     def test_fetch_from_crtsh(
         self,
         mocker,
-        mock_github_response,
-        parsed_mock_github_response,
-        mock_github_domains,
+        crtsh_github_response,
+        parsed_crtsh_github_response,
+        crtsh_github_domains,
     ):
         # Mock API._query_service to prevent an HTTP request from being
         # made to crt.sh when calling API.fetch
         mocker.patch(
-            "reconlib.crtsh.api.API._query_service", return_value=mock_github_response
+            "reconlib.crtsh.api.API._query_service", return_value=crtsh_github_response
         )
 
         domain_info = API(target="github.com")
         domain_info.fetch()
 
-        assert domain_info.results == parsed_mock_github_response
-        assert domain_info.num_results == len(mock_github_domains)
-        assert domain_info.found_domains == mock_github_domains
+        assert domain_info.results == parsed_crtsh_github_response
+        assert domain_info.num_results == len(crtsh_github_domains)
+        assert domain_info.found_domains == crtsh_github_domains
