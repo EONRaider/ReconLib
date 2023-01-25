@@ -83,3 +83,15 @@ class TestHackerTargetAPI:
                 ],
             }
         }
+
+    def test_reverse_dns(self, mocker, hackertarget_reversedns_github_response):
+        # Mock API._query_service to prevent an HTTP request from being
+        # made to api.hackertarget.com
+        mocker.patch(
+            "reconlib.hackertarget.api.API._query_service",
+            return_value=hackertarget_reversedns_github_response,
+        )
+        domain_info = API(target="140.82.121.9")
+        assert domain_info.reverse_dns() == {
+            IPv4Address("140.82.121.9"): "lb-140-82-121-9-fra.github.com"
+        }

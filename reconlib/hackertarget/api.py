@@ -1,6 +1,6 @@
 from collections import defaultdict
 from enum import Enum
-from ipaddress import ip_address
+from ipaddress import ip_address, IPv6Address, IPv4Address
 from urllib.parse import urlencode, urlparse, urlunparse
 from urllib.request import Request, urlopen
 
@@ -13,6 +13,7 @@ class HackerTarget(Enum):
 
     HOSTSEARCH = "hostsearch"
     DNSLOOKUP = "dnslookup"
+    REVERSEDNS = "reversedns"
 
 
 class API(ExternalService):
@@ -107,3 +108,13 @@ class API(ExternalService):
             record, value = entry.split(" : ")
             self.dns_records[self.target][record].append(value)
         return self.dns_records
+
+    def reverse_dns(self) -> dict[[IPv4Address, IPv6Address], str]:
+        query_url = self.get_query_url(
+            endpoint=HackerTarget.REVERSEDNS, params={"q": self.target}
+        )
+        ip_addr, domain = self._query_service(url=query_url).rstrip().split(" ")
+        ip_addr = ip_address(ip_addr)
+        self.found_domains[self.target].add(domain)
+        self.found_ip_addrs[self.target].add(ip_addr)
+        return {ip_addr: domain}

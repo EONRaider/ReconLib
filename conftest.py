@@ -251,5 +251,11 @@ def hackertarget_dnslookup_github_response():
         "NS : dns2.p08.nsone.net.\n"
         'TXT : "MS=6BF03E6AF5CB689E315FB6199603BABF2C88D805"\n'
         'TXT : "MS=ms44452932"\n'
-        "SOA : dns1.p08.nsone.net. hostmaster.nsone.net. 1656468023 43200 7200 1209600 3600\n"
+        "SOA : dns1.p08.nsone.net. hostmaster.nsone.net. 1656468023 43200 7200 "
+        "1209600 3600\n"
     )
+
+
+@pytest.fixture
+def hackertarget_reversedns_github_response():
+    return "140.82.121.9 lb-140-82-121-9-fra.github.com"
