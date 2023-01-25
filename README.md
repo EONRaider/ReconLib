@@ -80,4 +80,12 @@ domain_info.dnslookup()
 domain_info = hackertarget.API(target="140.82.121.9")
 domain_info.reverse_dns()
 # {IPv4Address("140.82.121.9"): "lb-140-82-121-9-fra.github.com"}
+
+domain_info.aslookup()
+# {
+#     "ASN": 36459,
+#     "IP_ADDRESS": IPv4Address("140.82.121.9"),
+#     "NETWORK": IPv4Network("140.82.121.0/24"),
+#     "OWNER": "GITHUB, US",
+# }
 ```
