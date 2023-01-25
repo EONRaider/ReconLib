@@ -25,6 +25,16 @@ class API(ExternalService):
         user_agent: str = None,
         encoding: str = "utf_8",
     ):
+        """
+        Wrapper for HTTP requests to the API of HackerTarget
+
+        :param target: A domain name to search for in api.hackertarget.com
+        :param user_agent: User-agent string to use when querying the
+            HackerTarget API (defaults to None for a random user-agent
+            string to be used at each new request)
+        :param encoding: Encoding used on responses provided by the
+            HackerTarget API
+        """
         super().__init__(target)
         self.user_agent = user_agent
         self.encoding = encoding
