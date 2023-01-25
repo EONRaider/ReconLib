@@ -6,6 +6,7 @@ from urllib.request import Request, urlopen
 
 from reconlib.core.base import ExternalService
 from reconlib.core.exceptions import InvalidTargetError
+from reconlib.utils.ip_address_validation import validate_ip_address
 from reconlib.utils.user_agents import random_user_agent
 
 
@@ -127,13 +128,9 @@ class API(ExternalService):
         :return: A dictionary mapping the supplied IP address to a
             resolved hostname
         """
-        try:
-            target_addr = ip_address(self.target)
-        except ValueError as e:
-            raise InvalidTargetError(str(e))
-
         query_url = self.get_query_url(
-            endpoint=HackerTarget.REVERSEDNS, params={"q": target_addr}
+            endpoint=HackerTarget.REVERSEDNS,
+            params={"q": validate_ip_address(self.target)},
         )
         ip_addr, domain = self._query_service(url=query_url).rstrip().split(" ")
         ip_addr = ip_address(ip_addr)
