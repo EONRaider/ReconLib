@@ -40,7 +40,7 @@ class API(ExternalService):
         self.encoding = encoding
         self.found_ip_addrs = defaultdict(set)
         self.found_domains = defaultdict(set)
-        self.hostsearch_results = defaultdict(dict)
+        self.hosts = defaultdict(dict)
         self.dns_records = defaultdict(dict)
 
     def get_query_url(self, endpoint: HackerTarget, params: dict = None) -> str:
@@ -96,10 +96,10 @@ class API(ExternalService):
         for result in self._query_service(url=query_url).rstrip().split("\n"):
             domain, ip_addr = result.split(",")
             ip_addr = ip_address(ip_addr)
-            self.hostsearch_results[self.target].update({ip_addr: domain})
+            self.hosts[self.target].update({ip_addr: domain})
             self.found_domains[self.target].add(domain)
             self.found_ip_addrs[self.target].add(ip_addr)
-        return self.hostsearch_results
+        return self.hosts
 
     def dnslookup(self) -> dict[str, dict]:
         """
