@@ -159,3 +159,14 @@ def parsed_crtsh_github_response():
             "serial_number": "039ce61a571eb9386009286a813e93f6",
         },
     ]
+
+
+@pytest.fixture
+def hackertarget_hostsearch_github_response():
+    return (
+        "lb-140-82-121-9-fra.github.com,140.82.121.9\n"
+        "lb-192-30-255-117-sea.github.com,192.30.255.117\n"
+        "lb-140-82-114-27-iad.github.com,140.82.114.27\n"
+        "out-23.smtp.github.com,192.30.252.206\n"
+        "o1.sgmail.github.com,192.254.114.176\n"
+    )

@@ -1,20 +1,7 @@
 from ipaddress import IPv4Address
 
-import pytest
-
 from reconlib.hackertarget import API
 from reconlib.hackertarget.api import HackerTarget
-
-
-@pytest.fixture
-def mock_github_hostsearch():
-    return (
-        "lb-140-82-121-9-fra.github.com,140.82.121.9\n"
-        "lb-192-30-255-117-sea.github.com,192.30.255.117\n"
-        "lb-140-82-114-27-iad.github.com,140.82.114.27\n"
-        "out-23.smtp.github.com,192.30.252.206\n"
-        "o1.sgmail.github.com,192.254.114.176\n"
-    )
 
 
 class TestHackerTargetAPI:
@@ -32,12 +19,12 @@ class TestHackerTargetAPI:
             == "https://api.hackertarget.com/hostsearch/?q=github.com&apikey=SOMEAPIKEY"
         )
 
-    def test_hostsearch(self, mocker, mock_github_hostsearch):
+    def test_hostsearch(self, mocker, hackertarget_hostsearch_github_response):
         # Mock API._query_service to prevent an HTTP request from being
         # made to api.hackertarget.com
         mocker.patch(
             "reconlib.hackertarget.api.API._query_service",
-            return_value=mock_github_hostsearch,
+            return_value=hackertarget_hostsearch_github_response,
         )
 
         domain_info = API(target="github.com")
