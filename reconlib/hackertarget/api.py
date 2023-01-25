@@ -1,6 +1,7 @@
 import urllib.parse
 from enum import Enum
 from ipaddress import ip_address, IPv4Address, IPv6Address
+from urllib.parse import urlencode, urlparse, urlunparse
 from urllib.request import Request, urlopen
 
 from reconlib.core.base import ExternalService
@@ -24,20 +25,20 @@ class API(ExternalService):
     ):
         super().__init__(target)
         self.user_agent = user_agent
-        self.hackertarget_url = urllib.parse.urlparse(hackertarget_url)
+        self.hackertarget_url = urlparse(hackertarget_url)
         self.encoding = encoding
         self.found_domains: dict[str, list[str]] = dict()
         self.found_ip_addrs: dict[str:[IPv4Address, IPv6Address]] = dict()
         self.hostsearch_results: dict[[IPv4Address, IPv6Address]:str] = dict()
 
     def get_query_url(self, endpoint: HackerTarget, params: dict = None) -> str:
-        return urllib.parse.urlunparse(
+        return urlunparse(
             (
                 self.hackertarget_url.scheme,
                 self.hackertarget_url.netloc,
                 f"{endpoint.value}/",
                 "",
-                urllib.parse.urlencode(params) if params else "",
+                urlencode(params) if params else "",
                 "",
             )
         )
