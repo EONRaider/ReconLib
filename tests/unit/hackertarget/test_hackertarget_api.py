@@ -29,11 +29,13 @@ class TestHackerTargetAPI:
 
         domain_info = API(target="github.com")
         assert domain_info.hostsearch() == {
-            IPv4Address("140.82.121.9"): "lb-140-82-121-9-fra.github.com",
-            IPv4Address("192.30.255.117"): "lb-192-30-255-117-sea.github.com",
-            IPv4Address("140.82.114.27"): "lb-140-82-114-27-iad.github.com",
-            IPv4Address("192.30.252.206"): "out-23.smtp.github.com",
-            IPv4Address("192.254.114.176"): "o1.sgmail.github.com",
+            "github.com": {
+                IPv4Address("140.82.114.27"): "lb-140-82-114-27-iad.github.com",
+                IPv4Address("140.82.121.9"): "lb-140-82-121-9-fra.github.com",
+                IPv4Address("192.30.252.206"): "out-23.smtp.github.com",
+                IPv4Address("192.30.255.117"): "lb-192-30-255-117-sea.github.com",
+                IPv4Address("192.254.114.176"): "o1.sgmail.github.com",
+            }
         }
         assert domain_info.found_domains == {
             "github.com": [
@@ -63,16 +65,21 @@ class TestHackerTargetAPI:
         )
         domain_info = API(target="github.com")
         assert domain_info.dnslookup() == {
-            "A": ["140.82.113.4"],
-            "MX": [
-                "1 aspmx.l.google.com.",
-                "10 alt3.aspmx.l.google.com.",
-                "10 alt4.aspmx.l.google.com.",
-            ],
-            "NS": ["dns1.p08.nsone.net.", "dns2.p08.nsone.net."],
-            "SOA": [
-                "dns1.p08.nsone.net. hostmaster.nsone.net. 1656468023 43200 7200 "
-                "1209600 3600"
-            ],
-            "TXT": ['"MS=6BF03E6AF5CB689E315FB6199603BABF2C88D805"', '"MS=ms44452932"'],
+            "github.com": {
+                "A": ["140.82.113.4"],
+                "MX": [
+                    "1 aspmx.l.google.com.",
+                    "10 alt3.aspmx.l.google.com.",
+                    "10 alt4.aspmx.l.google.com.",
+                ],
+                "NS": ["dns1.p08.nsone.net.", "dns2.p08.nsone.net."],
+                "TXT": [
+                    '"MS=6BF03E6AF5CB689E315FB6199603BABF2C88D805"',
+                    '"MS=ms44452932"',
+                ],
+                "SOA": [
+                    "dns1.p08.nsone.net. hostmaster.nsone.net. 1656468023 43200 7200 "
+                    "1209600 3600"
+                ],
+            }
         }

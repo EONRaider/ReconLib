@@ -28,10 +28,10 @@ class API(ExternalService):
         self.user_agent = user_agent
         self.hackertarget_url = urlparse(hackertarget_url)
         self.encoding = encoding
-        self.found_domains: dict[str, list[str]] = dict()
-        self.found_ip_addrs: dict[str:[IPv4Address, IPv6Address]] = dict()
-        self.hostsearch_results: dict[[IPv4Address, IPv6Address]:str] = dict()
-        self.dns_records: dict[str, [list[str]]] = defaultdict(list)
+        self.found_ip_addrs = defaultdict(list)
+        self.found_domains = defaultdict(list)
+        self.hostsearch_results = defaultdict(dict)
+        self.dns_records: dict[str:defaultdict] = dict()
 
     def get_query_url(self, endpoint: HackerTarget, params: dict = None) -> str:
         return urlunparse(
@@ -63,7 +63,7 @@ class API(ExternalService):
         with urlopen(request) as response:
             return response.read().decode(self.encoding)
 
-    def hostsearch(self) -> dict[[IPv4Address, IPv6Address], str]:
+    def hostsearch(self) -> defaultdict[str, dict]:
         """
         Send an HTTP request to HackerTarget's "hostsearch" API endpoint
         and fetch the results
@@ -74,12 +74,12 @@ class API(ExternalService):
         query_url = self.get_query_url(
             endpoint=HackerTarget.HOSTSEARCH, params={"q": self.target}
         )
-        response = self._query_service(url=query_url)
-        for result in response.rstrip().split("\n"):
+        for result in self._query_service(url=query_url).rstrip().split("\n"):
             domain, ip_addr = result.split(",")
-            self.hostsearch_results.update({ip_address(ip_addr): domain})
-        self.found_domains.update({self.target: [*self.hostsearch_results.values()]})
-        self.found_ip_addrs.update({self.target: [*self.hostsearch_results.keys()]})
+            ip_addr = ip_address(ip_addr)
+            self.hostsearch_results[self.target].update({ip_addr: domain})
+            self.found_domains[self.target].append(domain)
+            self.found_ip_addrs[self.target].append(ip_addr)
         return self.hostsearch_results
 
     def dnslookup(self) -> dict[str, list[str]]:
@@ -94,7 +94,8 @@ class API(ExternalService):
             endpoint=HackerTarget.DNSLOOKUP, params={"q": self.target}
         )
         response = self._query_service(url=query_url)
-        for result in response.rstrip().split("\n"):
-            entry, value = result.split(" : ")
-            self.dns_records[entry].append(value)
-        return dict(self.dns_records)
+        self.dns_records.update({self.target: defaultdict(list)})
+        for entry in response.rstrip().split("\n"):
+            record, value = entry.split(" : ")
+            self.dns_records[self.target][record].append(value)
+        return self.dns_records
