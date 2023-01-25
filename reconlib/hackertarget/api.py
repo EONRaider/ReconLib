@@ -1,6 +1,6 @@
 from collections import defaultdict
 from enum import Enum
-from ipaddress import ip_address, IPv4Address, IPv6Address
+from ipaddress import ip_address
 from urllib.parse import urlencode, urlparse, urlunparse
 from urllib.request import Request, urlopen
 
@@ -34,6 +34,15 @@ class API(ExternalService):
         self.dns_records: dict[str:defaultdict] = dict()
 
     def get_query_url(self, endpoint: HackerTarget, params: dict = None) -> str:
+        """
+        Build an RFC 1808 compliant string defining the URL to be
+        fetched based on user-supplied parameters
+
+        :param endpoint: An enumerated endpoint value of type HackerTarget
+        :param params: A dictionary mapping query string parameters to
+            their respective values
+        :return: The URL formatted as a string
+        """
         return urlunparse(
             (
                 self.hackertarget_url.scheme,
