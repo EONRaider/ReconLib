@@ -1,7 +1,7 @@
 [tool.poetry]
-name = "crtshapi"
-version = "0.1.0"
-description = ""
+name = "reconlib"
+version = "0.2.0"
+description = "A collection of modules and helpers for active and passive reconnaissance of remote hosts"
 authors = ["eonraider <livewire_voodoo@protonmail.com>"]
 
 [tool.poetry.dependencies]
