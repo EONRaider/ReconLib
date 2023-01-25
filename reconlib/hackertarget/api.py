@@ -31,7 +31,7 @@ class API(ExternalService):
         self.found_ip_addrs = defaultdict(list)
         self.found_domains = defaultdict(list)
         self.hostsearch_results = defaultdict(dict)
-        self.dns_records: dict[str:defaultdict] = dict()
+        self.dns_records = defaultdict(dict)
 
     def get_query_url(self, endpoint: HackerTarget, params: dict = None) -> str:
         """
@@ -91,7 +91,7 @@ class API(ExternalService):
             self.found_ip_addrs[self.target].append(ip_addr)
         return self.hostsearch_results
 
-    def dnslookup(self) -> dict[str, list[str]]:
+    def dnslookup(self) -> dict[str, dict]:
         """
         Send an HTTP request to HackerTarget's "dnslookup" API endpoint
         and fetch the results
@@ -102,9 +102,8 @@ class API(ExternalService):
         query_url = self.get_query_url(
             endpoint=HackerTarget.DNSLOOKUP, params={"q": self.target}
         )
-        response = self._query_service(url=query_url)
         self.dns_records.update({self.target: defaultdict(list)})
-        for entry in response.rstrip().split("\n"):
+        for entry in self._query_service(url=query_url).rstrip().split("\n"):
             record, value = entry.split(" : ")
             self.dns_records[self.target][record].append(value)
         return self.dns_records
