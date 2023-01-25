@@ -9,10 +9,11 @@ pip install reconlib
 ## How to Use
 
 ### Unofficial crt.sh API
+
 ```python
 from reconlib.crtsh import API
 
-domain_info = API(domain="github.com")
+domain_info = API(target="github.com")
 
 domain_info.fetch()
 # [{'issuer_ca_id': 185756, 'issuer_name': 'C=US, O=DigiCert Inc,
