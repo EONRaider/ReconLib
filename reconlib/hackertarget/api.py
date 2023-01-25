@@ -30,25 +30,6 @@ class API(ExternalService):
         self.found_ip_addrs: dict[str:[IPv4Address, IPv6Address]] = dict()
         self.hostsearch_results: dict[[IPv4Address, IPv6Address]:str] = dict()
 
-    def hostsearch(self) -> dict[[IPv4Address, IPv6Address], str]:
-        """
-        Send an HTTP request to HackerTarget's "hostsearch" API endpoint
-        and fetch the results
-
-        :return: A dictionary mapping each known IP address from the
-            target to a given subdomain
-        """
-        query_url = self.get_query_url(
-            endpoint=HackerTarget.HOSTSEARCH, params={"q": self.target}
-        )
-        response = self._query_service(url=query_url)
-        for result in response.rstrip().split("\n"):
-            domain, ip_addr = result.split(",")
-            self.hostsearch_results.update({ip_address(ip_addr): domain})
-        self.found_domains.update({self.target: [*self.hostsearch_results.values()]})
-        self.found_ip_addrs.update({self.target: [*self.hostsearch_results.keys()]})
-        return self.hostsearch_results
-
     def get_query_url(self, endpoint: HackerTarget, params: dict = None) -> str:
         return urllib.parse.urlunparse(
             (
@@ -78,3 +59,22 @@ class API(ExternalService):
         )
         with urlopen(request) as response:
             return response.read().decode(self.encoding)
+
+    def hostsearch(self) -> dict[[IPv4Address, IPv6Address], str]:
+        """
+        Send an HTTP request to HackerTarget's "hostsearch" API endpoint
+        and fetch the results
+
+        :return: A dictionary mapping each known IP address from the
+            target to a given subdomain
+        """
+        query_url = self.get_query_url(
+            endpoint=HackerTarget.HOSTSEARCH, params={"q": self.target}
+        )
+        response = self._query_service(url=query_url)
+        for result in response.rstrip().split("\n"):
+            domain, ip_addr = result.split(",")
+            self.hostsearch_results.update({ip_address(ip_addr): domain})
+        self.found_domains.update({self.target: [*self.hostsearch_results.values()]})
+        self.found_ip_addrs.update({self.target: [*self.hostsearch_results.keys()]})
+        return self.hostsearch_results
