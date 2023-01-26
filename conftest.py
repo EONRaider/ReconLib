@@ -4,6 +4,11 @@ import pytest
 
 
 @pytest.fixture
+def api_key():
+    return "TOTALLY-LEGIT-API-KEY"
+
+
+@pytest.fixture
 def root_dir():
     return Path(__file__).parent.absolute()
 
@@ -264,3 +269,26 @@ def hackertarget_reversedns_github_response():
 @pytest.fixture
 def hackertarget_aslookup_github_response():
     return '"140.82.114.27","36459","140.82.114.0/24","GITHUB, US"'
+
+
+@pytest.fixture
+def virustotal_subdomains_nmap_response(root_dir):
+    response_path = "tests/unit/virustotal/virustotal_subdomains_nmap_response.txt"
+    with open(root_dir.joinpath(response_path)) as file:
+        return file.read()
+
+
+@pytest.fixture
+def virustotal_nmap_subdomains():
+    return {
+        "ckeepingthechristmasspiritalive365.nmap.org",
+        "dgbridgedgbridgedgbridge.nmap.org",
+        "echoriseaboveyourlimits.nmap.org",
+        "ifashionvibe-blogfashionvibe-bloguefashionvibe-blog.nmap.org",
+        "keralahoneymoonvactionpackage-echo.nmap.org",
+        "nrlwashdc-mil-tac-issues.nmap.org",
+        "prestashoptuto.nmap.org",
+        "scanme-baumschutz.nmap.org",
+        "the-blog-that-shareswww.nmap.org",
+        "wwwtradingdeportivo-domingodearmas.nmap.org",
+    }
