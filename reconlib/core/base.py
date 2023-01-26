@@ -20,19 +20,22 @@ class ExternalService(ABC):
             path and query parameters
         """
 
-    def _query_service(self, url: str) -> str:
+    def _query_service(self, url: str, headers: dict = None) -> str:
         """
         Send an HTTP GET request to an external service
         :return: A string containing the service's response
         """
-        request = Request(
-            url=url,
-            data=None,
-            headers={
-                "User-Agent": self.user_agent
-                if self.user_agent is not None
-                else random_user_agent()
-            },
-        )
+        # Build a User-Agent header from a user-supplied value or get a
+        # random agent
+        ua_header = {
+            "User-Agent": self.user_agent
+            if self.user_agent is not None
+            else random_user_agent()
+        }
+
+        # Merge the User-Agent header with any additional values
+        headers = {**headers, **ua_header} if headers is not None else ua_header
+
+        request = Request(url=url, data=None, headers=headers)
         with urlopen(request) as response:
             return response.read().decode(self.encoding)
