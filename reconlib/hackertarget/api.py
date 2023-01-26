@@ -6,7 +6,7 @@ from typing import Any
 from urllib.parse import urlencode, urlparse, urlunparse
 
 from reconlib.core.base import ExternalService
-from reconlib.utils.validation import validate_ip_address
+from reconlib.core.utils.validation import validate_ip_address
 
 
 class HackerTarget(Enum):

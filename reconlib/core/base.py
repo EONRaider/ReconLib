@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from urllib.request import Request, urlopen
 
-from reconlib.utils.user_agents import random_user_agent
+from reconlib.core.utils.user_agents import random_user_agent
 
 
 class ExternalService(ABC):
