@@ -40,16 +40,16 @@ class API(ExternalService):
         self.results: list[dict] = []
 
     @property
-    def num_results(self) -> int:
+    def num_hosts(self) -> int:
         """
         Number of results returned successfully from a query to crt.sh
         """
         return len(self.results)
 
     @property
-    def found_domains(self) -> set[str]:
+    def hosts(self) -> set[str]:
         """
-        Set containing strings defining each domain returned by a
+        Set containing strings defining each subdomain returned by a
         query to crt.sh
         """
         return {result["common_name"] for result in self.results}

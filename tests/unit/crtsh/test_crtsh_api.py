@@ -38,5 +38,5 @@ class TestCrtShAPI:
         domain_info.fetch()
 
         assert domain_info.results == parsed_crtsh_github_response
-        assert domain_info.num_results == len(crtsh_github_domains)
-        assert domain_info.found_domains == crtsh_github_domains
+        assert domain_info.num_hosts == len(crtsh_github_domains)
+        assert domain_info.hosts == crtsh_github_domains

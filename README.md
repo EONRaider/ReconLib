@@ -21,10 +21,10 @@ domain_info.fetch()
 # 'name_value': 'skyline.github.com\nwww.skyline.github.com', 'id': 8383197569,
 # 'entry_timestamp': '2023-01-10T23:48:41.932', ... }]
 
-domain_info.num_results
+domain_info.num_hosts
 # 737
 
-domain_info.found_domains
+domain_info.hosts
 # {'*.id.github.com', 'cla.github.com', 'graphql-stage.github.com', 'camo.github.com',
 # 'www.github.com', 'vpn-ca.iad.github.com', '*.hq.github.com', ...}
 ```
