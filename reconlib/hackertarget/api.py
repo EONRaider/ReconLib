@@ -161,13 +161,12 @@ class API(ExternalService):
         )
         self.asn[(asn := int(response.group("asn")))].update(
             {
-                "NETWORK": (network := IPv4Network(response.group("network"))),
-                "OWNER": (owner := response.group("owner")),
+                "NETWORK": IPv4Network(response.group("network")),
+                "OWNER": response.group("owner"),
             }
         )
         return {
             "IP_ADDRESS": ip_address(response.group("ip_addr")),
             "ASN": asn,
-            "NETWORK": network,
-            "OWNER": owner,
+            **self.asn[asn],
         }
