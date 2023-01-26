@@ -1,7 +1,5 @@
 import json
-from urllib.request import Request, urlopen
 
-from reconlib.utils.user_agents import random_user_agent
 from reconlib.core.base import ExternalService
 
 
@@ -31,12 +29,10 @@ class API(ExternalService):
         :param crtsh_url: URL assigned to the crt.sh service
         :param encoding: Encoding used on responses provided by crt.sh
         """
-        super().__init__(target)
-        self.user_agent = user_agent
+        super().__init__(target, user_agent, encoding)
         self.wildcard = wildcard
         self.include_expired = include_expired
         self.crtsh_url = crtsh_url
-        self.encoding = encoding
         self.results: list[dict] = []
 
     @property
@@ -73,24 +69,6 @@ class API(ExternalService):
 
         return url
 
-    def _query_service(self) -> str:
-        """
-        Send an HTTP GET request to crt.sh in a fetch operation
-
-        :return A decoded string containing the response from crt.sh
-        """
-        request = Request(
-            url=self.get_query_url(),
-            data=None,
-            headers={
-                "User-Agent": self.user_agent
-                if self.user_agent is not None
-                else random_user_agent()
-            },
-        )
-        with urlopen(request) as response:
-            return response.read().decode(self.encoding)
-
     def fetch(self) -> list[dict]:
         """
         Fetch certificate information for a given domain from crt.sh
@@ -99,5 +77,5 @@ class API(ExternalService):
         certificate information of a subdomain known by crt.sh to
         belong to the target domain
         """
-        self.results = json.loads(self._query_service())
+        self.results = json.loads(self._query_service(url=self.get_query_url()))
         return self.results

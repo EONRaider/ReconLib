@@ -4,11 +4,9 @@ from enum import Enum
 from ipaddress import ip_address, IPv6Address, IPv4Address, IPv4Network
 from typing import Any
 from urllib.parse import urlencode, urlparse, urlunparse
-from urllib.request import Request, urlopen
 
 from reconlib.core.base import ExternalService
 from reconlib.utils.validation import validate_ip_address
-from reconlib.utils.user_agents import random_user_agent
 
 
 class HackerTarget(Enum):
@@ -39,9 +37,7 @@ class API(ExternalService):
         :param encoding: Encoding used on responses provided by the
             HackerTarget API
         """
-        super().__init__(target)
-        self.user_agent = user_agent
-        self.encoding = encoding
+        super().__init__(target, user_agent, encoding)
         self.found_ip_addrs = defaultdict(set)
         self.found_domains = defaultdict(set)
         self.hosts = defaultdict(dict)
@@ -68,24 +64,6 @@ class API(ExternalService):
                 "",
             )
         )
-
-    def _query_service(self, url: str) -> str:
-        """
-        Send an HTTP GET request to HackerTarget endpoint
-
-        :return A decoded string containing the response from HackerTarget
-        """
-        request = Request(
-            url=url,
-            data=None,
-            headers={
-                "User-Agent": self.user_agent
-                if self.user_agent
-                else random_user_agent()
-            },
-        )
-        with urlopen(request) as response:
-            return response.read().decode(self.encoding)
 
     def hostsearch(self) -> defaultdict[str, dict]:
         """
