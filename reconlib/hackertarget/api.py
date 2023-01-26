@@ -130,6 +130,8 @@ class API(ExternalService):
 
         :return: A dictionary mapping the supplied IP address to a
             resolved hostname
+        :raise: InvalidTargetError if set to a target that cannot be
+            cast into an IPv4/IPv6 address
         """
         query_url = self.get_query_url(
             endpoint=HackerTarget.REVERSEDNS,
@@ -149,6 +151,8 @@ class API(ExternalService):
         :return: A dictionary mapping the lookup results (IP address,
             ASN, network address space and owner) to their respective
             values
+        :raise: InvalidTargetError if set to a target that cannot be
+            cast into an IPv4/IPv6 address
         """
         query_url = self.get_query_url(
             endpoint=HackerTarget.ASLOOKUP,
