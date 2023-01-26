@@ -7,7 +7,7 @@ from urllib.parse import urlencode, urlparse, urlunparse
 from urllib.request import Request, urlopen
 
 from reconlib.core.base import ExternalService
-from reconlib.utils.ip_address_validation import validate_ip_address
+from reconlib.utils.validation import validate_ip_address
 from reconlib.utils.user_agents import random_user_agent
 
 
