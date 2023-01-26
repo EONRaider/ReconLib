@@ -38,8 +38,8 @@ class API(ExternalService):
             HackerTarget API
         """
         super().__init__(target, user_agent, encoding)
-        self.found_ip_addrs = defaultdict(set)
-        self.found_domains = defaultdict(set)
+        self.ip_addresses = defaultdict(set)
+        self.subdomains = defaultdict(set)
         self.hosts = defaultdict(dict)
         self.dns_records = defaultdict(dict)
         self.asn = defaultdict(dict)
@@ -80,8 +80,8 @@ class API(ExternalService):
             domain, ip_addr = result.split(",")
             ip_addr = ip_address(ip_addr)
             self.hosts[self.target].update({ip_addr: domain})
-            self.found_domains[self.target].add(domain)
-            self.found_ip_addrs[self.target].add(ip_addr)
+            self.subdomains[self.target].add(domain)
+            self.ip_addresses[self.target].add(ip_addr)
         return self.hosts
 
     def dnslookup(self) -> dict[str, dict]:
@@ -117,8 +117,8 @@ class API(ExternalService):
         )
         ip_addr, domain = self._query_service(url=query_url).rstrip().split(" ")
         ip_addr = ip_address(ip_addr)
-        self.found_domains[self.target].add(domain)
-        self.found_ip_addrs[self.target].add(ip_addr)
+        self.subdomains[self.target].add(domain)
+        self.ip_addresses[self.target].add(ip_addr)
         return {ip_addr: domain}
 
     def aslookup(self) -> dict[str, Any]:

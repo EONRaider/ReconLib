@@ -40,7 +40,7 @@ class TestHackerTargetAPI:
                 IPv4Address("192.254.114.176"): "o1.sgmail.github.com",
             }
         }
-        assert domain_info.found_domains == {
+        assert domain_info.subdomains == {
             "github.com": {
                 "lb-140-82-121-9-fra.github.com",
                 "lb-192-30-255-117-sea.github.com",
@@ -49,7 +49,7 @@ class TestHackerTargetAPI:
                 "o1.sgmail.github.com",
             }
         }
-        assert domain_info.found_ip_addrs == {
+        assert domain_info.ip_addresses == {
             "github.com": {
                 IPv4Address("140.82.121.9"),
                 IPv4Address("192.30.255.117"),
