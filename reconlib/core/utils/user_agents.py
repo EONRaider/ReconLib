@@ -30,6 +30,6 @@ def random_user_agent(file_path: [str, Path] = None) -> str:
         file
     """
     if file_path is None:
-        file_path = Path(__file__).parent.absolute().joinpath("user-agents-list.txt")
+        file_path = Path(__file__).parent.absolute().joinpath("user_agents_list.txt")
     with open(file_path) as file:
         return _get_random_line(file)

@@ -1,5 +1,8 @@
-from ipaddress import IPv4Address
+from ipaddress import IPv4Address, IPv4Network
 
+import pytest
+
+from reconlib.core.exceptions import InvalidTargetError
 from reconlib.hackertarget import API
 from reconlib.hackertarget.api import HackerTarget
 
@@ -37,7 +40,7 @@ class TestHackerTargetAPI:
                 IPv4Address("192.254.114.176"): "o1.sgmail.github.com",
             }
         }
-        assert domain_info.found_domains == {
+        assert domain_info.subdomains == {
             "github.com": {
                 "lb-140-82-121-9-fra.github.com",
                 "lb-192-30-255-117-sea.github.com",
@@ -46,7 +49,7 @@ class TestHackerTargetAPI:
                 "o1.sgmail.github.com",
             }
         }
-        assert domain_info.found_ip_addrs == {
+        assert domain_info.ip_addresses == {
             "github.com": {
                 IPv4Address("140.82.121.9"),
                 IPv4Address("192.30.255.117"),
@@ -95,3 +98,44 @@ class TestHackerTargetAPI:
         assert domain_info.reverse_dns() == {
             IPv4Address("140.82.121.9"): "lb-140-82-121-9-fra.github.com"
         }
+
+    def test_invalid_reverse_dns(self):
+        invalid_target = "github.com"
+        with pytest.raises(InvalidTargetError) as e:
+            API(target=invalid_target).reverse_dns()
+        assert (
+            str(e.value.message) == f"InvalidTargetError: '{invalid_target}' does not "
+            f"appear to be an IPv4 or IPv6 address"
+        )
+        assert e.value.code == 1
+
+    def test_aslookup(self, mocker, hackertarget_aslookup_github_response):
+        # Mock API._query_service to prevent an HTTP request from being
+        # made to api.hackertarget.com
+        mocker.patch(
+            "reconlib.hackertarget.api.API._query_service",
+            return_value=hackertarget_aslookup_github_response,
+        )
+        domain_info = API(target="140.82.121.9")
+        assert domain_info.aslookup() == {
+            "ASN": 36459,
+            "IP_ADDRESS": IPv4Address("140.82.114.27"),
+            "NETWORK": IPv4Network("140.82.114.0/24"),
+            "OWNER": "GITHUB, US",
+        }
+        assert domain_info.asn == {
+            36459: {
+                "NETWORK": IPv4Network("140.82.114.0/24"),
+                "OWNER": "GITHUB, US",
+            }
+        }
+
+    def test_invalid_aslookup(self):
+        invalid_target = "github.com"
+        with pytest.raises(InvalidTargetError) as e:
+            API(target=invalid_target).aslookup()
+        assert (
+            str(e.value.message) == f"InvalidTargetError: '{invalid_target}' does not "
+            f"appear to be an IPv4 or IPv6 address"
+        )
+        assert e.value.code == 1

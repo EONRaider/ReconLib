@@ -21,12 +21,13 @@ domain_info.fetch()
 # 'name_value': 'skyline.github.com\nwww.skyline.github.com', 'id': 8383197569,
 # 'entry_timestamp': '2023-01-10T23:48:41.932', ... }]
 
-domain_info.num_results
-# 737
-
-domain_info.found_domains
-# {'*.id.github.com', 'cla.github.com', 'graphql-stage.github.com', 'camo.github.com',
-# 'www.github.com', 'vpn-ca.iad.github.com', '*.hq.github.com', ...}
+domain_info.subdomains
+# {
+#     'github.com': {
+#         'import2.github.com', 'api.security.github.com', 'examregistration.github.com',
+#         '*.registry.github.com', 'api.stars.github.com', ...
+#     }
+# }
 ```
 
 ### Unofficial HackerTarget API
@@ -43,7 +44,7 @@ domain_info.hostsearch()
 #     ...
 # }
 
-domain_info.found_domains
+domain_info.subdomains
 # {
 #     "github.com": {
 #         "lb-140-82-121-9-fra.github.com",
@@ -53,7 +54,7 @@ domain_info.found_domains
 #     }
 # }
 
-domain_info.found_ip_addrs
+domain_info.ip_addresses
 # {
 #     "github.com": {
 #         IPv4Address("140.82.121.9"),
@@ -80,4 +81,35 @@ domain_info.dnslookup()
 domain_info = hackertarget.API(target="140.82.121.9")
 domain_info.reverse_dns()
 # {IPv4Address("140.82.121.9"): "lb-140-82-121-9-fra.github.com"}
+
+domain_info.aslookup()
+# {
+#     "ASN": 36459,
+#     "IP_ADDRESS": IPv4Address("140.82.121.9"),
+#     "NETWORK": IPv4Network("140.82.121.0/24"),
+#     "OWNER": "GITHUB, US",
+# }
+```
+
+### VirusTotal API
+A `virustotal.API`object can be instantiated with the "api_key" attribute
+set to a pre-defined key, but setting it with the "VIRUSTOTAL_API_KEY"
+environment variable is the recommended way to do it before proceeding so hardcoded
+secrets can be completely avoided. ReconLib will detect environment variables
+set directly through a shell or a file.
+```shell
+EXPORT VIRUSTOTAL_API_KEY="YOUR-VT-API-KEY"
+```
+
+```python
+from reconlib import virustotal
+domain_info = virustotal.API(target="scanme.nmap.org")
+domain_info.get_subdomains()
+# {
+#     "ckeepingthechristmasspiritalive365.nmap.org",
+#     "dgbridgedgbridgedgbridge.nmap.org",
+#     "echoriseaboveyourlimits.nmap.org",
+#     "wwwtradingdeportivo-domingodearmas.nmap.org",
+#     ...
+# }
 ```

@@ -8,6 +8,8 @@ class TestCrtShAPI:
         assert crtsh.include_expired is True
         assert crtsh.encoding == "utf_8"
 
+    def test_get_query_url(self):
+        crtsh = API(target="test.domain.abc")
         assert (
             crtsh.get_query_url() == "https://crt.sh/?q=%.test.domain.abc&output=json"
         )
@@ -34,9 +36,8 @@ class TestCrtShAPI:
             "reconlib.crtsh.api.API._query_service", return_value=crtsh_github_response
         )
 
-        domain_info = API(target="github.com")
-        domain_info.fetch()
+        target = "github.com"
+        (domain_info := API(target)).fetch()
 
         assert domain_info.results == parsed_crtsh_github_response
-        assert domain_info.num_results == len(crtsh_github_domains)
-        assert domain_info.found_domains == crtsh_github_domains
+        assert domain_info.subdomains[target] == crtsh_github_domains

@@ -8,6 +8,7 @@ authors = ["eonraider <livewire_voodoo@protonmail.com>"]
 python = "^3.10"
 pytest = "^7.2.1"
 pytest-mock = "^3.10.0"
+python-dotenv = "^0.21.1"
 
 [tool.poetry.dev-dependencies]
 

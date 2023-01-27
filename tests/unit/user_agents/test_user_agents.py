@@ -1,6 +1,6 @@
 import pytest
 
-from reconlib.utils.user_agents import random_user_agent
+from reconlib.core.utils.user_agents import random_user_agent
 
 
 class TestUserAgents:
