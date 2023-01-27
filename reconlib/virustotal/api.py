@@ -3,6 +3,7 @@ import os
 import urllib.error
 from collections import defaultdict
 from enum import Enum
+from pathlib import Path
 from urllib.parse import urlunparse, urlencode, urlparse
 
 from dotenv import load_dotenv
@@ -25,7 +26,7 @@ class API(ExternalService):
         *,
         user_agent: str = None,
         encoding: str = "utf_8",
-        api_key: str = None,
+        api_key: [str, Path] = None,
     ):
         """
         Wrapper for HTTP requests to the API of VirusTotal
@@ -36,7 +37,9 @@ class API(ExternalService):
             string to be used at each new request)
         :param encoding: Encoding used on responses provided by the
             VirusTotal API
-        :param api_key: An API key for use in requests to VirusTotal API
+        :param api_key: A string containing an API key for use in
+            requests to VirusTotal API or the absolute path to a file
+            in which the value can be found
         """
         super().__init__(target, user_agent, encoding)
         self.api_key = api_key
@@ -51,16 +54,21 @@ class API(ExternalService):
         return self._api_key
 
     @api_key.setter
-    def api_key(self, value: str) -> None:
+    def api_key(self, value: [str, Path]) -> None:
         """
         Set the API key value from a user-supplied argument or by
         reading the "VIRUSTOTAL_API_KEY" environment variable
-        :param value: A string containing an API key
+        :param value: A string containing an API key for use in
+            requests to VirusTotal API or the absolute path to a file
+            in which the value can be found
         """
         if value is not None:
-            self._api_key = value
+            if (file_path := Path(value)).is_file():
+                load_dotenv(file_path, override=True)
+                self._api_key = os.environ.get("VIRUSTOTAL_API_KEY")
+            else:
+                self._api_key = value
         else:
-            load_dotenv()
             if (api_key := os.environ.get("VIRUSTOTAL_API_KEY")) is None:
                 raise APIKeyError(
                     "An API key is required when retrieving information from "
