@@ -40,7 +40,7 @@ class API(ExternalService):
         super().__init__(target, user_agent, encoding)
         self.ip_addresses = defaultdict(set)
         self.subdomains = defaultdict(set)
-        self.hosts = defaultdict(dict)
+        self.results = defaultdict(dict)
         self.dns_records = defaultdict(dict)
         self.asn = defaultdict(dict)
 
@@ -79,10 +79,10 @@ class API(ExternalService):
         for result in self._query_service(url=query_url).rstrip().split("\n"):
             domain, ip_addr = result.split(",")
             ip_addr = ip_address(ip_addr)
-            self.hosts[self.target].update({ip_addr: domain})
+            self.results[self.target].update({ip_addr: domain})
             self.subdomains[self.target].add(domain)
             self.ip_addresses[self.target].add(ip_addr)
-        return self.hosts
+        return self.results
 
     def dnslookup(self) -> dict[str, dict]:
         """
@@ -136,17 +136,23 @@ class API(ExternalService):
             endpoint=HackerTarget.ASLOOKUP,
             params={"q": validate_ip_address(self.target)},
         )
+
+        # Query the API and split the response into four pre-defined
+        # groups: IP Address, ASN, IP Address Space (Network) and Owner
+        # name
         response = re.match(
             r"^\"(?P<ip_addr>.+)\",\"(?P<asn>.+)\",\"(?P<network>.+)\","
             r"\"(?P<owner>.+)\"$",
             self._query_service(url=query_url).rstrip(),
         )
+
         self.asn[(asn := int(response.group("asn")))].update(
             {
                 "NETWORK": IPv4Network(response.group("network")),
                 "OWNER": response.group("owner"),
             }
         )
+
         return {
             "IP_ADDRESS": ip_address(response.group("ip_addr")),
             "ASN": asn,
