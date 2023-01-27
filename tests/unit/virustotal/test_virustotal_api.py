@@ -1,6 +1,9 @@
 import os
 import re
 
+import pytest
+
+from reconlib.core.exceptions import APIKeyError
 from reconlib.virustotal import API
 from reconlib.virustotal.api import VirusTotal
 
@@ -24,6 +27,16 @@ class TestVirusTotalAPI:
             file_api_key = re.search(r"\"(.*)\"", file.read()).group(1)
         domain_info = API(target="nmap.org", api_key=api_key_file_path)
         assert domain_info.api_key == file_api_key
+
+    def test_undefined_api_key(self):
+        # Prevent environment variable set on other tests from
+        # interfering on raising of APIKeyError in this test
+        os.environ.pop("VIRUSTOTAL_API_KEY", None)
+
+        with pytest.raises(APIKeyError):
+            # API key not defined neither as an environment variable nor
+            # an instance attribute
+            API(target="nmap.org")
 
     def test_headers(self, api_key):
         domain_info = API(target="nmap.org", api_key=api_key)
