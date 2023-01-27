@@ -37,21 +37,6 @@ class API(ExternalService):
         self.subdomains = defaultdict(set)
         self.results = defaultdict(dict)
 
-    @property
-    def num_hosts(self) -> int:
-        """
-        Number of results returned successfully from a query to crt.sh
-        """
-        return len(self.results)
-
-    @property
-    def hosts(self) -> set[str]:
-        """
-        Set containing strings defining each subdomain returned by a
-        query to crt.sh
-        """
-        return {result["common_name"] for result in self.results}
-
     def get_query_url(self) -> str:
         """
         A string defining the URL to be fetched based on user-supplied
