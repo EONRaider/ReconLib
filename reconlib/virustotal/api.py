@@ -43,8 +43,8 @@ class API(ExternalService):
         """
         super().__init__(target, user_agent, encoding)
         self.api_key = api_key
-        self.results: dict[str, dict] = defaultdict(dict)
-        self.subdomains: dict[str, set] = dict()
+        self.results = defaultdict(dict)
+        self.subdomains = defaultdict(set)
 
     @property
     def api_key(self) -> str:
@@ -126,12 +126,12 @@ class API(ExternalService):
 
         try:
             response = self._query_service(url=query_url, headers=self.headers)
+            parsed_response = json.loads(response)
         except urllib.error.HTTPError:
             raise APIKeyError("Unauthorized. Check the API key settings and try again.")
 
-        self.results[self.target].update(json.loads(response))
-        self.subdomains[self.target] = {
-            host["id"] for host in self.results[self.target]["data"]
-        }
+        self.results[self.target].update(parsed_response)
+        subdomains = {host["id"] for host in parsed_response["data"]}
+        self.subdomains[self.target] = subdomains
 
-        return self.subdomains[self.target]
+        return subdomains
