@@ -28,11 +28,9 @@ class TestVirusTotalAPI:
         domain_info = API(target="nmap.org", api_key=api_key_file_path)
         assert domain_info.api_key == file_api_key
 
-    def test_undefined_api_key(self):
-        # Prevent environment variable set on other tests from
-        # interfering on raising of APIKeyError in this test
-        os.environ.pop("VIRUSTOTAL_API_KEY", None)
+        os.environ.pop("VIRUSTOTAL_API_KEY", None)  # Cleanup environment
 
+    def test_undefined_api_key(self):
         with pytest.raises(APIKeyError):
             # API key not defined neither as an environment variable nor
             # an instance attribute
