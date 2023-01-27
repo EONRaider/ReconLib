@@ -33,9 +33,8 @@ class ExternalService(ABC):
             else random_user_agent()
         }
 
-        # Merge the User-Agent header with any additional values
+        # Merge the User-Agent header with any supplied additional values
         headers = {**headers, **ua_header} if headers is not None else ua_header
 
-        request = Request(url=url, data=None, headers=headers)
-        with urlopen(request) as response:
+        with urlopen(Request(url=url, data=None, headers=headers)) as response:
             return response.read().decode(self.encoding)
