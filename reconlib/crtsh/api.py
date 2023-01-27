@@ -1,4 +1,5 @@
 import json
+from collections import defaultdict
 
 from reconlib.core.base import ExternalService
 
@@ -33,7 +34,8 @@ class API(ExternalService):
         self.wildcard = wildcard
         self.include_expired = include_expired
         self.crtsh_url = crtsh_url
-        self.results: list[dict] = []
+        self.subdomains = defaultdict(set)
+        self.results = defaultdict(dict)
 
     @property
     def num_hosts(self) -> int:
@@ -77,5 +79,7 @@ class API(ExternalService):
         certificate information of a subdomain known by crt.sh to
         belong to the target domain
         """
-        self.results = json.loads(self._query_service(url=self.get_query_url()))
-        return self.results
+        response = json.loads(self._query_service(url=self.get_query_url()))
+        self.results[self.target] = response
+        self.subdomains[self.target].update(host["common_name"] for host in response)
+        return response
