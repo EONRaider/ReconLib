@@ -43,7 +43,7 @@ domain_info.hostsearch()
 #     ...
 # }
 
-domain_info.found_domains
+domain_info.subdomains
 # {
 #     "github.com": {
 #         "lb-140-82-121-9-fra.github.com",
@@ -53,7 +53,7 @@ domain_info.found_domains
 #     }
 # }
 
-domain_info.found_ip_addrs
+domain_info.ip_addresses
 # {
 #     "github.com": {
 #         IPv4Address("140.82.121.9"),
@@ -87,5 +87,28 @@ domain_info.aslookup()
 #     "IP_ADDRESS": IPv4Address("140.82.121.9"),
 #     "NETWORK": IPv4Network("140.82.121.0/24"),
 #     "OWNER": "GITHUB, US",
+# }
+```
+
+### VirusTotal API
+A `virustotal.API`object can be instantiated with the "api_key" attribute
+set to a pre-defined key, but setting it with the "VIRUSTOTAL_API_KEY"
+environment variable is the recommended way to do it before proceeding so hardcoded
+secrets can be completely avoided. ReconLib will detect environment variables
+set directly through a shell or a file.
+```shell
+EXPORT VIRUSTOTAL_API_KEY="YOUR-VT-API-KEY"
+```
+
+```python
+from reconlib import virustotal
+domain_info = virustotal.API(target="scanme.nmap.org")
+domain_info.get_subdomains()
+# {
+#     "ckeepingthechristmasspiritalive365.nmap.org",
+#     "dgbridgedgbridgedgbridge.nmap.org",
+#     "echoriseaboveyourlimits.nmap.org",
+#     "wwwtradingdeportivo-domingodearmas.nmap.org",
+#     ...
 # }
 ```
