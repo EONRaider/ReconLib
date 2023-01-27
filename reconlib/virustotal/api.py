@@ -62,14 +62,18 @@ class API(ExternalService):
             requests to VirusTotal API or the absolute path to a file
             in which the value can be found
         """
+
+        def _read_api_key_from_env() -> str:
+            return os.environ.get("VIRUSTOTAL_API_KEY")
+
         if value is not None:
             if (file_path := Path(value)).is_file():
                 load_dotenv(file_path, override=True)
-                self._api_key = os.environ.get("VIRUSTOTAL_API_KEY")
+                self._api_key = _read_api_key_from_env()
             else:
                 self._api_key = value
         else:
-            if (api_key := os.environ.get("VIRUSTOTAL_API_KEY")) is None:
+            if (api_key := _read_api_key_from_env()) is None:
                 raise APIKeyError(
                     "An API key is required when retrieving information from "
                     "VirusTotal. Either initialize an API object with the 'api_key' "
