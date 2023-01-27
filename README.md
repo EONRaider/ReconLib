@@ -21,12 +21,13 @@ domain_info.fetch()
 # 'name_value': 'skyline.github.com\nwww.skyline.github.com', 'id': 8383197569,
 # 'entry_timestamp': '2023-01-10T23:48:41.932', ... }]
 
-domain_info.num_hosts
-# 737
-
-domain_info.hosts
-# {'*.id.github.com', 'cla.github.com', 'graphql-stage.github.com', 'camo.github.com',
-# 'www.github.com', 'vpn-ca.iad.github.com', '*.hq.github.com', ...}
+domain_info.subdomains
+# {
+#     'github.com': {
+#         'import2.github.com', 'api.security.github.com', 'examregistration.github.com',
+#         '*.registry.github.com', 'api.stars.github.com', ...
+#     }
+# }
 ```
 
 ### Unofficial HackerTarget API
