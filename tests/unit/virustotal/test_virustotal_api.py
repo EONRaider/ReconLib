@@ -46,13 +46,16 @@ class TestVirusTotalAPI:
         }
 
     def test_get_query_url(self, api_key):
-        domain_info = API(target="nmap.org", api_key=api_key)
+        target = "nmap.org"
+        limit = 1000
+        domain_info = API(target, api_key=api_key)
+
         assert (
             domain_info.get_query_url(
-                endpoint=VirusTotal.SUBDOMAINS, params={"limit": 1000}
+                endpoint=VirusTotal.SUBDOMAINS, params={"limit": limit}
             )
-            == "https://www.virustotal.com/api/v3/domains/nmap.org/subdomains?"
-            "limit=1000"
+            == f"https://www.virustotal.com/api/v3/domains/{target}/subdomains?"
+            f"limit={limit}"
         )
 
     def test_subdomains(
