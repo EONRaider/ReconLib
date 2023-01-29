@@ -27,6 +27,7 @@ class API(ExternalService):
         user_agent: str = None,
         encoding: str = "utf_8",
         api_key: [str, Path] = None,
+        api_key_env_name: str = "VIRUSTOTAL_API_KEY",
     ):
         """
         Wrapper for HTTP requests to the API of VirusTotal
@@ -42,6 +43,7 @@ class API(ExternalService):
             in which the value can be found
         """
         super().__init__(target, user_agent, encoding)
+        self.api_key_env_name = api_key_env_name
         self.api_key = api_key
         self.results = defaultdict(dict)
         self.subdomains = defaultdict(set)
@@ -62,18 +64,14 @@ class API(ExternalService):
             requests to VirusTotal API or the absolute path to a file
             in which the value can be found
         """
-
-        def _read_api_key_from_env() -> str:
-            return os.environ.get("VIRUSTOTAL_API_KEY")
-
         if value is not None:
             if (file_path := Path(value)).is_file():
                 load_dotenv(file_path, override=True)
-                self._api_key = _read_api_key_from_env()
+                self._api_key = os.environ.get(self.api_key_env_name)
             else:
                 self._api_key = value
         else:
-            if (api_key := _read_api_key_from_env()) is None:
+            if (api_key := os.environ.get(self.api_key_env_name)) is None:
                 raise APIKeyError(
                     "An API key is required when retrieving information from "
                     "VirusTotal. Either initialize an API object with the 'api_key' "
