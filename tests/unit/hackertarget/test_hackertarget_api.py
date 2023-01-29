@@ -8,7 +8,7 @@ from reconlib.hackertarget.api import HackerTarget
 
 
 class TestHackerTargetAPI:
-    def test_get_query_url(self):
+    def test_get_query_url(self, api_key):
         domain_info = API(target="github.com")
         assert (
             domain_info.get_query_url(endpoint=HackerTarget.HOSTSEARCH)
@@ -17,9 +17,9 @@ class TestHackerTargetAPI:
         assert (
             domain_info.get_query_url(
                 endpoint=HackerTarget.HOSTSEARCH,
-                params={"q": domain_info.target, "apikey": "SOMEAPIKEY"},
+                params={"q": domain_info.target, "apikey": api_key},
             )
-            == "https://api.hackertarget.com/hostsearch/?q=github.com&apikey=SOMEAPIKEY"
+            == f"https://api.hackertarget.com/hostsearch/?q=github.com&apikey={api_key}"
         )
 
     def test_hostsearch(self, mocker, hackertarget_hostsearch_github_response):
