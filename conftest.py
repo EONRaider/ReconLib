@@ -1,3 +1,5 @@
+import json
+from ipaddress import IPv4Address
 from pathlib import Path
 
 import pytest
@@ -262,6 +264,26 @@ def hackertarget_hostsearch_github_response():
 
 
 @pytest.fixture
+def hackertarget_github_subdomains(hackertarget_hostsearch_github_response) -> set[str]:
+    return {
+        info.split(",")[0]
+        for info in hackertarget_hostsearch_github_response.split("\n")
+        if len(info) > 0
+    }
+
+
+@pytest.fixture
+def hackertarget_github_ip_addresses(
+    hackertarget_hostsearch_github_response,
+) -> set[IPv4Address]:
+    return {
+        IPv4Address(info.split(",")[1])
+        for info in hackertarget_hostsearch_github_response.split("\n")
+        if len(info) > 0
+    }
+
+
+@pytest.fixture
 def hackertarget_dnslookup_github_response():
     return (
         "A : 140.82.113.4\n"
@@ -295,16 +317,6 @@ def virustotal_subdomains_nmap_response(root_dir):
 
 
 @pytest.fixture
-def virustotal_nmap_subdomains():
-    return {
-        "ckeepingthechristmasspiritalive365.nmap.org",
-        "dgbridgedgbridgedgbridge.nmap.org",
-        "echoriseaboveyourlimits.nmap.org",
-        "ifashionvibe-blogfashionvibe-bloguefashionvibe-blog.nmap.org",
-        "keralahoneymoonvactionpackage-echo.nmap.org",
-        "nrlwashdc-mil-tac-issues.nmap.org",
-        "prestashoptuto.nmap.org",
-        "scanme-baumschutz.nmap.org",
-        "the-blog-that-shareswww.nmap.org",
-        "wwwtradingdeportivo-domingodearmas.nmap.org",
-    }
+def virustotal_nmap_subdomains(virustotal_subdomains_nmap_response) -> set[str]:
+    parsed_response = json.loads(virustotal_subdomains_nmap_response)
+    return {host["id"] for host in parsed_response["data"]}
