@@ -1,37 +1,60 @@
+"""
+ReconLib: A collection of modules and helpers for active and passive
+reconnaissance of remote hosts.
+
+Author: EONRaider
+GitHub: https://github.com/EONRaider
+Contact: https://www.twitter.com/eon_raider
+
+    Copyright (C) 2023 EONRaider @ keybase.io/eonraider
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program. If not, see
+    <https://github.com/EONRaider/ReconLib/blob/master/LICENSE>.
+"""
+
 import json
-import os
 import urllib.error
 from collections import defaultdict
 from enum import Enum
 from pathlib import Path
 from urllib.parse import urlunparse, urlencode, urlparse
 
-from dotenv import load_dotenv
-
-from reconlib.core.base import ExternalService
+from reconlib.core.base import AuthenticatedExternalService
 from reconlib.core.exceptions import APIKeyError
 
 
 class VirusTotal(Enum):
-    """Enumeration of API endpoints made available by VirusTotal"""
+    """
+    Enumeration of API endpoints made available by VirusTotal
+    """
 
     URL = urlparse("https://www.virustotal.com/api/v3")
     SUBDOMAINS = "domains/{}/subdomains"
 
 
-class API(ExternalService):
+class VirusTotalAPI(AuthenticatedExternalService):
     def __init__(
         self,
-        target: str,
         *,
         user_agent: str = None,
         encoding: str = "utf_8",
         api_key: [str, Path] = None,
+        api_key_env_name: str = "VIRUSTOTAL_API_KEY",
     ):
         """
         Wrapper for HTTP requests to the API of VirusTotal
 
-        :param target: A domain name to search for in VirusTotal API
         :param user_agent: User-agent string to use when querying the
             VirusTotal API (defaults to None for a random user-agent
             string to be used at each new request)
@@ -40,47 +63,13 @@ class API(ExternalService):
         :param api_key: A string containing an API key for use in
             requests to VirusTotal API or the absolute path to a file
             in which the value can be found
+        :param api_key_env_name: String representing the expected name
+            of the environment variable from which the API key value
+            will be read. Defaults to VIRUSTOTAL_API_KEY.
         """
-        super().__init__(target, user_agent, encoding)
-        self.api_key = api_key
+        super().__init__(user_agent, encoding, api_key, api_key_env_name)
         self.results = defaultdict(dict)
         self.subdomains = defaultdict(set)
-
-    @property
-    def api_key(self) -> str:
-        """
-        Get the API key value
-        """
-        return self._api_key
-
-    @api_key.setter
-    def api_key(self, value: [str, Path]) -> None:
-        """
-        Set the API key value from a user-supplied argument or by
-        reading the "VIRUSTOTAL_API_KEY" environment variable
-        :param value: A string containing an API key for use in
-            requests to VirusTotal API or the absolute path to a file
-            in which the value can be found
-        """
-
-        def _read_api_key_from_env() -> str:
-            return os.environ.get("VIRUSTOTAL_API_KEY")
-
-        if value is not None:
-            if (file_path := Path(value)).is_file():
-                load_dotenv(file_path, override=True)
-                self._api_key = _read_api_key_from_env()
-            else:
-                self._api_key = value
-        else:
-            if (api_key := _read_api_key_from_env()) is None:
-                raise APIKeyError(
-                    "An API key is required when retrieving information from "
-                    "VirusTotal. Either initialize an API object with the 'api_key' "
-                    "attribute or set a 'VIRUSTOTAL_API_KEY' environment variable "
-                    "with the appropriate value."
-                )
-            self._api_key = api_key
 
     @property
     def headers(self) -> dict:
@@ -89,11 +78,14 @@ class API(ExternalService):
         """
         return {"accept": "application/json", "x-apikey": self.api_key}
 
-    def get_query_url(self, endpoint: VirusTotal, params: dict = None) -> str:
+    def get_query_url(
+        self, target: str, endpoint: VirusTotal, params: dict = None
+    ) -> str:
         """
         Build an RFC 1808 compliant string defining the URL to be
         fetched based on user-supplied parameters
 
+        :param target: A domain name to search for in VirusTotal API
         :param endpoint: An enumerated endpoint value of type VirusTotal
         :param params: A dictionary mapping query string parameters to
             their respective values
@@ -103,25 +95,26 @@ class API(ExternalService):
             (
                 (url := VirusTotal.URL.value).scheme,
                 url.netloc,
-                f"{url.path}/{endpoint.value.format(self.target)}",
+                f"{url.path}/{endpoint.value.format(target)}",
                 "",
                 urlencode(params) if params else "",
                 "",
             )
         )
 
-    def get_subdomains(self, limit: int = 1000) -> set[str]:
+    def fetch_subdomains(self, target: str, limit: int = 1000) -> set[str]:
         """
         Send an HTTP request to VirusTotal's "domains" API endpoint
         and fetch the results from is "subdomains" relationship
 
+        :param target: A domain name to search for in VirusTotal API
         :param limit: Maximum number of subdomains to retrieve per
             request
 
         :return: A set of strings containing each known subdomain
         """
         query_url = self.get_query_url(
-            endpoint=VirusTotal.SUBDOMAINS, params={"limit": limit}
+            target=target, endpoint=VirusTotal.SUBDOMAINS, params={"limit": limit}
         )
 
         try:
@@ -130,8 +123,8 @@ class API(ExternalService):
         except urllib.error.HTTPError:
             raise APIKeyError("Unauthorized. Check the API key settings and try again.")
 
-        self.results[self.target].update(parsed_response)
+        self.results[target].update(parsed_response)
         subdomains = {host["id"] for host in parsed_response["data"]}
-        self.subdomains[self.target] = subdomains
+        self.subdomains[target] = subdomains
 
         return subdomains

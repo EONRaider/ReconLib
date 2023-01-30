@@ -2,6 +2,10 @@
 ReconLib: A collection of modules and helpers for active and passive
 reconnaissance of remote hosts.
 
+Author: EONRaider
+GitHub: https://github.com/EONRaider
+Contact: https://www.twitter.com/eon_raider
+
     Copyright (C) 2023 EONRaider @ keybase.io/eonraider
 
     This program is free software: you can redistribute it and/or modify
@@ -19,18 +23,6 @@ reconnaissance of remote hosts.
     <https://github.com/EONRaider/ReconLib/blob/master/LICENSE>.
 """
 
-
-class ReconLibException(Exception):
-    def __init__(self, message: str, code: int):
-        self.message = message
-        self.code = code
-
-
-class InvalidTargetError(ReconLibException):
-    def __init__(self, message: str, code: int = 1):
-        super().__init__(f"{self.__class__.__name__}: {message}", code)
-
-
-class APIKeyError(ReconLibException):
-    def __init__(self, message: str, code: int = 1):
-        super().__init__(f"{self.__class__.__name__}: {message}", code)
+from .crtsh.api import CRTShAPI
+from .hackertarget.api import HackerTargetAPI
+from .virustotal.api import VirusTotalAPI

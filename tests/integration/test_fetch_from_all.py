@@ -23,14 +23,32 @@ Contact: https://www.twitter.com/eon_raider
     <https://github.com/EONRaider/ReconLib/blob/master/LICENSE>.
 """
 
-from ipaddress import ip_address, IPv6Address, IPv4Address
-from typing import Any
+import pytest
 
-from reconlib.core.exceptions import InvalidTargetError
+from reconlib import CRTShAPI, HackerTargetAPI, VirusTotalAPI
 
 
-def validate_ip_address(ip_addr: Any) -> [IPv4Address, IPv6Address]:
-    try:
-        return ip_address(ip_addr)
-    except ValueError as e:
-        raise InvalidTargetError(str(e))
+@pytest.mark.external_fetch
+class TestFetchFromAll:
+    def test_fetch_all(self, root_dir):
+        """
+        Execute a live fetch from all available APIs on ReconLib. This
+        test is single-threaded, possibly consumes API usage quotas,
+        will perform external HTTP requests and takes several seconds
+        to complete.
+        """
+        # A file named .env located at the project root and defining
+        # an API key for VirusTotal is required for this test
+        virus_total_api_key = root_dir.joinpath(".env")
+
+        all_apis = (
+            CRTShAPI(),
+            HackerTargetAPI(),
+            VirusTotalAPI(api_key=virus_total_api_key),
+        )
+
+        subdomains = set().union(
+            *(api.fetch_subdomains(target="nmap.com") for api in all_apis)
+        )
+
+        assert subdomains  # <-- Add breakpoint here to inspect results
