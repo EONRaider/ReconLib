@@ -11,9 +11,9 @@ pip install reconlib
 ### Unofficial crt.sh API
 
 ```python
-from reconlib import crtsh
+from reconlib import CRTShAPI
 
-domain_info = crtsh.API(target="github.com")
+domain_info = CRTShAPI(target="github.com")
 
 domain_info.fetch()
 # [{'issuer_ca_id': 185756, 'issuer_name': 'C=US, O=DigiCert Inc,
@@ -21,7 +21,7 @@ domain_info.fetch()
 # 'name_value': 'skyline.github.com\nwww.skyline.github.com', 'id': 8383197569,
 # 'entry_timestamp': '2023-01-10T23:48:41.932', ... }]
 
-domain_info.subdomains
+print(domain_info.subdomains)
 # {
 #     'github.com': {
 #         'import2.github.com', 'api.security.github.com', 'examregistration.github.com',
@@ -31,12 +31,13 @@ domain_info.subdomains
 ```
 
 ### Unofficial HackerTarget API
+
 ```python
-from reconlib import hackertarget
+from reconlib import HackerTargetAPI
 
-domain_info = hackertarget.API(target="github.com")
+domain_info = HackerTargetAPI(target="github.com")
 
-domain_info.hostsearch()
+print(domain_info.hostsearch())
 # {
 #     IPv4Address("140.82.121.9"): "lb-140-82-121-9-fra.github.com",
 #     IPv4Address("192.30.255.117"): "lb-192-30-255-117-sea.github.com",
@@ -44,7 +45,7 @@ domain_info.hostsearch()
 #     ...
 # }
 
-domain_info.subdomains
+print(domain_info.subdomains)
 # {
 #     "github.com": {
 #         "lb-140-82-121-9-fra.github.com",
@@ -54,7 +55,7 @@ domain_info.subdomains
 #     }
 # }
 
-domain_info.ip_addresses
+print(domain_info.ip_addresses)
 # {
 #     "github.com": {
 #         IPv4Address("140.82.121.9"),
@@ -64,7 +65,7 @@ domain_info.ip_addresses
 #     }
 # }
 
-domain_info.dnslookup()
+print(domain_info.dnslookup())
 # {
 #     "github.com": {
 #         "A": ["140.82.113.4"],
@@ -78,11 +79,12 @@ domain_info.dnslookup()
 #     }
 # }
 
-domain_info = hackertarget.API(target="140.82.121.9")
-domain_info.reverse_dns()
+domain_info = HackerTargetAPI(target="140.82.121.9")
+
+print(domain_info.reverse_dns())
 # {IPv4Address("140.82.121.9"): "lb-140-82-121-9-fra.github.com"}
 
-domain_info.aslookup()
+print(domain_info.aslookup())
 # {
 #     "ASN": 36459,
 #     "IP_ADDRESS": IPv4Address("140.82.121.9"),
@@ -102,8 +104,9 @@ EXPORT VIRUSTOTAL_API_KEY="YOUR-VT-API-KEY"
 ```
 
 ```python
-from reconlib import virustotal
-domain_info = virustotal.API(target="scanme.nmap.org")
+from reconlib import VirusTotalAPI
+
+domain_info = VirusTotalAPI(target="scanme.nmap.org")
 domain_info.get_subdomains()
 # {
 #     "ckeepingthechristmasspiritalive365.nmap.org",

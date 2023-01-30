@@ -4,7 +4,7 @@ from collections import defaultdict
 from reconlib.core.base import ExternalService
 
 
-class API(ExternalService):
+class CRTShAPI(ExternalService):
     def __init__(
         self,
         target: str,

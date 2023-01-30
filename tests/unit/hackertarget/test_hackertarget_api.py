@@ -3,13 +3,13 @@ from ipaddress import IPv4Address, IPv4Network
 import pytest
 
 from reconlib.core.exceptions import InvalidTargetError
-from reconlib.hackertarget import API
+from reconlib import HackerTargetAPI
 from reconlib.hackertarget.api import HackerTarget
 
 
 class TestHackerTargetAPI:
     def test_get_query_url(self, api_key):
-        domain_info = API(target="github.com")
+        domain_info = HackerTargetAPI(target="github.com")
         assert (
             domain_info.get_query_url(endpoint=HackerTarget.HOSTSEARCH)
             == "https://api.hackertarget.com/hostsearch/"
@@ -26,11 +26,11 @@ class TestHackerTargetAPI:
         # Mock API._query_service to prevent an HTTP request from being
         # made to api.hackertarget.com
         mocker.patch(
-            "reconlib.hackertarget.api.API._query_service",
+            "reconlib.hackertarget.api.HackerTargetAPI._query_service",
             return_value=hackertarget_hostsearch_github_response,
         )
 
-        domain_info = API(target="github.com")
+        domain_info = HackerTargetAPI(target="github.com")
         assert domain_info.hostsearch() == {
             "github.com": {
                 IPv4Address("140.82.114.27"): "lb-140-82-114-27-iad.github.com",
@@ -63,10 +63,10 @@ class TestHackerTargetAPI:
         # Mock API._query_service to prevent an HTTP request from being
         # made to api.hackertarget.com
         mocker.patch(
-            "reconlib.hackertarget.api.API._query_service",
+            "reconlib.hackertarget.api.HackerTargetAPI._query_service",
             return_value=hackertarget_dnslookup_github_response,
         )
-        domain_info = API(target="github.com")
+        domain_info = HackerTargetAPI(target="github.com")
         assert domain_info.dnslookup() == {
             "github.com": {
                 "A": ["140.82.113.4"],
@@ -91,10 +91,10 @@ class TestHackerTargetAPI:
         # Mock API._query_service to prevent an HTTP request from being
         # made to api.hackertarget.com
         mocker.patch(
-            "reconlib.hackertarget.api.API._query_service",
+            "reconlib.hackertarget.api.HackerTargetAPI._query_service",
             return_value=hackertarget_reversedns_github_response,
         )
-        domain_info = API(target="140.82.121.9")
+        domain_info = HackerTargetAPI(target="140.82.121.9")
         assert domain_info.reverse_dns() == {
             IPv4Address("140.82.121.9"): "lb-140-82-121-9-fra.github.com"
         }
@@ -102,7 +102,7 @@ class TestHackerTargetAPI:
     def test_invalid_reverse_dns(self):
         invalid_target = "github.com"
         with pytest.raises(InvalidTargetError) as e:
-            API(target=invalid_target).reverse_dns()
+            HackerTargetAPI(target=invalid_target).reverse_dns()
         assert (
             str(e.value.message) == f"InvalidTargetError: '{invalid_target}' does not "
             f"appear to be an IPv4 or IPv6 address"
@@ -113,10 +113,10 @@ class TestHackerTargetAPI:
         # Mock API._query_service to prevent an HTTP request from being
         # made to api.hackertarget.com
         mocker.patch(
-            "reconlib.hackertarget.api.API._query_service",
+            "reconlib.hackertarget.api.HackerTargetAPI._query_service",
             return_value=hackertarget_aslookup_github_response,
         )
-        domain_info = API(target="140.82.121.9")
+        domain_info = HackerTargetAPI(target="140.82.121.9")
         assert domain_info.aslookup() == {
             "ASN": 36459,
             "IP_ADDRESS": IPv4Address("140.82.114.27"),
@@ -133,7 +133,7 @@ class TestHackerTargetAPI:
     def test_invalid_aslookup(self):
         invalid_target = "github.com"
         with pytest.raises(InvalidTargetError) as e:
-            API(target=invalid_target).aslookup()
+            HackerTargetAPI(target=invalid_target).aslookup()
         assert (
             str(e.value.message) == f"InvalidTargetError: '{invalid_target}' does not "
             f"appear to be an IPv4 or IPv6 address"

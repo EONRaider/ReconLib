@@ -19,7 +19,7 @@ class HackerTarget(Enum):
     ASLOOKUP = "aslookup"
 
 
-class API(ExternalService):
+class HackerTargetAPI(ExternalService):
     def __init__(
         self,
         target: str,

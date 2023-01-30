@@ -16,7 +16,7 @@ class VirusTotal(Enum):
     SUBDOMAINS = "domains/{}/subdomains"
 
 
-class API(AuthenticatedExternalService):
+class VirusTotalAPI(AuthenticatedExternalService):
     def __init__(
         self,
         target: str,
