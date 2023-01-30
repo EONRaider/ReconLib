@@ -24,6 +24,17 @@ class ExternalService(ABC):
             path and query parameters
         """
 
+    @abstractmethod
+    def fetch_subdomains(self, target: str) -> set[str]:
+        """
+        Utility method that executes a request to the service's API,
+        processes the response and returns a set of known subdomains for
+        a given target
+
+        :param target: A domain name to search for in the service's API
+        """
+        ...
+
     def _query_service(self, url: str, headers: dict = None) -> str:
         """
         Send an HTTP GET request to an external service
