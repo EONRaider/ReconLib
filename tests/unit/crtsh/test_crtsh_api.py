@@ -46,3 +46,15 @@ class TestCRTShAPI:
 
         assert domain_info.results == parsed_crtsh_github_response
         assert domain_info.subdomains[target] == crtsh_github_domains
+
+    def test_fetch_subdomains(
+        self, mocker, crtsh_github_response, crtsh_github_domains
+    ):
+        # Mock API._query_service to prevent an HTTP request from being
+        # made to crt.sh when calling API.fetch
+        mocker.patch(
+            "reconlib.crtsh.api.CRTShAPI._query_service",
+            return_value=crtsh_github_response,
+        )
+
+        assert CRTShAPI().fetch_subdomains(target="github.com") == crtsh_github_domains

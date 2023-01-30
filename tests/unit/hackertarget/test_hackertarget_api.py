@@ -51,6 +51,24 @@ class TestHackerTargetAPI:
             "github.com": hackertarget_github_ip_addresses
         }
 
+    def test_fetch_subdomains(
+        self,
+        mocker,
+        hackertarget_hostsearch_github_response,
+        hackertarget_github_subdomains,
+    ):
+        # Mock API._query_service to prevent an HTTP request from being
+        # made to api.hackertarget.com
+        mocker.patch(
+            "reconlib.hackertarget.api.HackerTargetAPI._query_service",
+            return_value=hackertarget_hostsearch_github_response,
+        )
+
+        assert (
+            HackerTargetAPI().fetch_subdomains(target="github.com")
+            == hackertarget_github_subdomains
+        )
+
     def test_dns_lookup(self, mocker, hackertarget_dnslookup_github_response):
         # Mock API._query_service to prevent an HTTP request from being
         # made to api.hackertarget.com
