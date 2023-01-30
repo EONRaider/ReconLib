@@ -5,6 +5,23 @@ from pathlib import Path
 import pytest
 
 
+def pytest_addoption(parser) -> None:
+    parser.addoption(
+        "--external-fetch",
+        action="store_true",
+        help="Run tests that perform HTTP requests to external resources",
+    )
+
+
+def pytest_runtest_setup(item) -> None:
+    if "external_fetch" in item.keywords and not item.config.getoption(
+        "external_fetch"
+    ):
+        pytest.skip(
+            'Run pytest with the "--external_fetch" option enabled to run ' "this test"
+        )
+
+
 @pytest.fixture
 def api_key() -> str:
     return "TOTALLY-LEGIT-API-KEY"
