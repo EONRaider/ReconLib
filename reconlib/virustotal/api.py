@@ -1,14 +1,11 @@
 import json
-import os
 import urllib.error
 from collections import defaultdict
 from enum import Enum
 from pathlib import Path
 from urllib.parse import urlunparse, urlencode, urlparse
 
-from dotenv import load_dotenv
-
-from reconlib.core.base import ExternalService
+from reconlib.core.base import AuthenticatedExternalService
 from reconlib.core.exceptions import APIKeyError
 
 
@@ -19,7 +16,7 @@ class VirusTotal(Enum):
     SUBDOMAINS = "domains/{}/subdomains"
 
 
-class API(ExternalService):
+class API(AuthenticatedExternalService):
     def __init__(
         self,
         target: str,
@@ -41,44 +38,13 @@ class API(ExternalService):
         :param api_key: A string containing an API key for use in
             requests to VirusTotal API or the absolute path to a file
             in which the value can be found
+        :param api_key_env_name: String representing the expected name
+            of the environment variable from which the API key value
+            will be read. Defaults to VIRUSTOTAL_API_KEY.
         """
-        super().__init__(target, user_agent, encoding)
-        self.api_key_env_name = api_key_env_name
-        self.api_key = api_key
+        super().__init__(target, user_agent, encoding, api_key, api_key_env_name)
         self.results = defaultdict(dict)
         self.subdomains = defaultdict(set)
-
-    @property
-    def api_key(self) -> str:
-        """
-        Get the API key value
-        """
-        return self._api_key
-
-    @api_key.setter
-    def api_key(self, value: [str, Path]) -> None:
-        """
-        Set the API key value from a user-supplied argument or by
-        reading the "VIRUSTOTAL_API_KEY" environment variable
-        :param value: A string containing an API key for use in
-            requests to VirusTotal API or the absolute path to a file
-            in which the value can be found
-        """
-        if value is not None:
-            if (file_path := Path(value)).is_file():
-                load_dotenv(file_path, override=True)
-                self._api_key = os.environ.get(self.api_key_env_name)
-            else:
-                self._api_key = value
-        else:
-            if (api_key := os.environ.get(self.api_key_env_name)) is None:
-                raise APIKeyError(
-                    "An API key is required when retrieving information from "
-                    "VirusTotal. Either initialize an API object with the 'api_key' "
-                    "attribute or set a 'VIRUSTOTAL_API_KEY' environment variable "
-                    "with the appropriate value."
-                )
-            self._api_key = api_key
 
     @property
     def headers(self) -> dict:
