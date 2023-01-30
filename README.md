@@ -1,5 +1,7 @@
 # ReconLib
 A collection of modules and helpers for active and passive reconnaissance of remote hosts.
+ReconLib can be used as a standalone library on Python code or as an engine for tools
+such as subdomain enumerators and others.
 
 ## Installation
 ```shell
@@ -7,55 +9,70 @@ pip install reconlib
 ```
 
 ## How to Use
+Click on each section to expand a code snippet that illustrates how to use each API.
 
 ### Unofficial crt.sh API
+<details>
+    <summary>Fetch Certificate Information</summary>
 
-```python
-from reconlib import CRTShAPI
+    ```python
+    from reconlib import CRTShAPI
 
-domain_info = CRTShAPI(target="github.com")
+    CRTShAPI().fetch_certificates(target="github.com")
 
-domain_info.fetch()
-# [{'issuer_ca_id': 185756, 'issuer_name': 'C=US, O=DigiCert Inc,
-# CN=DigiCert TLS RSA SHA256 2020 CA1', 'common_name': 'skyline.github.com',
-# 'name_value': 'skyline.github.com\nwww.skyline.github.com', 'id': 8383197569,
-# 'entry_timestamp': '2023-01-10T23:48:41.932', ... }]
+    # [{'issuer_ca_id': 185756, 'issuer_name': 'C=US, O=DigiCert Inc,
+    # CN=DigiCert TLS RSA SHA256 2020 CA1', 'common_name': 'skyline.github.com',
+    # 'name_value': 'skyline.github.com\nwww.skyline.github.com', 'id': 8383197569,
+    # 'entry_timestamp': '2023-01-10T23:48:41.932', ... }]
+    ```
+</details>
 
-print(domain_info.subdomains)
-# {
-#     'github.com': {
-#         'import2.github.com', 'api.security.github.com', 'examregistration.github.com',
-#         '*.registry.github.com', 'api.stars.github.com', ...
-#     }
-# }
-```
+<details>
+    <summary>Fetch All Subdomains</summary>
+
+    ```python
+    from reconlib import CRTShAPI
+
+    CRTShAPI().fetch_subdomains(target="github.com")
+    # {
+    #     'import2.github.com', 'api.security.github.com', 'examregistration.github.com',
+    #     '*.registry.github.com', 'api.stars.github.com', ...
+    # }
+    ```
+</details>
 
 ### Unofficial HackerTarget API
+
+<details>
+    <summary>Perform a request to HackerTarget's API "hostsearch" endpoint</summary>
+
+    ```python
+    from reconlib import HackerTargetAPI
+
+    print(HackerTargetAPI().hostsearch(target="github.com"))
+    # {
+    #     IPv4Address("140.82.121.9"): "lb-140-82-121-9-fra.github.com",
+    #     IPv4Address("192.30.255.117"): "lb-192-30-255-117-sea.github.com",
+    #     IPv4Address("140.82.114.27"): "lb-140-82-114-27-iad.github.com",
+    #     ...
+    # }
+    ```
+</details>
 
 ```python
 from reconlib import HackerTargetAPI
 
-domain_info = HackerTargetAPI(target="github.com")
-
-print(domain_info.hostsearch())
+print(HackerTargetAPI().fetch_subdomains(target="github.com"))
 # {
-#     IPv4Address("140.82.121.9"): "lb-140-82-121-9-fra.github.com",
-#     IPv4Address("192.30.255.117"): "lb-192-30-255-117-sea.github.com",
-#     IPv4Address("140.82.114.27"): "lb-140-82-114-27-iad.github.com",
+#     "lb-140-82-121-9-fra.github.com",
+#     "lb-192-30-255-117-sea.github.com",
+#     "lb-140-82-114-27-iad.github.com",
 #     ...
 # }
 
-print(domain_info.subdomains)
-# {
-#     "github.com": {
-#         "lb-140-82-121-9-fra.github.com",
-#         "lb-192-30-255-117-sea.github.com",
-#         "lb-140-82-114-27-iad.github.com",
-#         ...
-#     }
-# }
-
-print(domain_info.ip_addresses)
+```
+```python
+print(hacker_target.ip_addresses)
 # {
 #     "github.com": {
 #         IPv4Address("140.82.121.9"),
@@ -64,8 +81,9 @@ print(domain_info.ip_addresses)
 #         ...
 #     }
 # }
-
-print(domain_info.dnslookup())
+```
+```python
+print(hacker_target.dnslookup())
 # {
 #     "github.com": {
 #         "A": ["140.82.113.4"],
@@ -78,13 +96,17 @@ print(domain_info.dnslookup())
 #         ...
 #     }
 # }
+```
 
-domain_info = HackerTargetAPI(target="140.82.121.9")
+```python
+hacker_target = HackerTargetAPI(target="140.82.121.9")
 
-print(domain_info.reverse_dns())
+print(hacker_target.reverse_dns())
 # {IPv4Address("140.82.121.9"): "lb-140-82-121-9-fra.github.com"}
+```
 
-print(domain_info.aslookup())
+```python
+print(hacker_target.aslookup())
 # {
 #     "ASN": 36459,
 #     "IP_ADDRESS": IPv4Address("140.82.121.9"),
