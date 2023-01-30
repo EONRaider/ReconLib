@@ -10,8 +10,7 @@ from reconlib.core.utils.user_agents import random_user_agent
 
 
 class ExternalService(ABC):
-    def __init__(self, target: str, user_agent: str, encoding: str):
-        self.target = target
+    def __init__(self, user_agent: str, encoding: str):
         self.user_agent = user_agent
         self.encoding = encoding
 
@@ -48,13 +47,12 @@ class ExternalService(ABC):
 class AuthenticatedExternalService(ExternalService, ABC):
     def __init__(
         self,
-        target: str,
         user_agent: str,
         encoding: str,
         api_key: [str, Path],
         api_key_env_name: str,
     ):
-        super().__init__(target, user_agent, encoding)
+        super().__init__(user_agent, encoding)
         self.api_key_env_name = api_key_env_name
         self.api_key = api_key
 
