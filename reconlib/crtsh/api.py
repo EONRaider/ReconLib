@@ -71,3 +71,13 @@ class CRTShAPI(ExternalService):
         self.results[target] = response
         self.subdomains[target].update(host["common_name"] for host in response)
         return response
+
+    def fetch_subdomains(self, target: str) -> set[str]:
+        """
+        Utility method that executes a request to crt.sh, processes the
+        response and returns a set of known subdomains for a given target
+
+        :param target: A domain name to search for in crt.sh
+        """
+        self.fetch_certificates(target)
+        return self.subdomains[target]

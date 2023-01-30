@@ -77,7 +77,7 @@ class VirusTotalAPI(AuthenticatedExternalService):
             )
         )
 
-    def get_subdomains(self, target: str, limit: int = 1000) -> set[str]:
+    def fetch_subdomains(self, target: str, limit: int = 1000) -> set[str]:
         """
         Send an HTTP request to VirusTotal's "domains" API endpoint
         and fetch the results from is "subdomains" relationship

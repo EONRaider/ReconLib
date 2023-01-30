@@ -81,6 +81,17 @@ class HackerTargetAPI(ExternalService):
             self.ip_addresses[target].add(ip_addr)
         return self.results
 
+    def fetch_subdomains(self, target: str) -> set[str]:
+        """
+        Utility method that executes a request to HackerTarget,
+        processes the response and returns a set of known subdomains for
+        a given target
+
+        :param target: A domain name to search for in HackerTarget
+        """
+        self.hostsearch(target)
+        return self.subdomains[target]
+
     def dnslookup(self, target: str) -> dict[str, dict]:
         """
         Send an HTTP request to HackerTarget's "dnslookup" API endpoint
