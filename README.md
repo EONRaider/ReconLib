@@ -9,70 +9,63 @@ pip install reconlib
 ```
 
 ## How to Use
-Click on each section to expand a code snippet that illustrates how to use each API.
+Click on a section to expand a code snippet that illustrates how to use each API and its
+available methods.
 
 ### Unofficial crt.sh API
 <details>
-    <summary>Fetch Certificate Information</summary>
+<summary>Fetch Certificate Information</summary>
 
-    ```python
-    from reconlib import CRTShAPI
+```python
+from reconlib import CRTShAPI
 
-    CRTShAPI().fetch_certificates(target="github.com")
+certificates = CRTShAPI().fetch_certificates(target="github.com")
 
-    # [{'issuer_ca_id': 185756, 'issuer_name': 'C=US, O=DigiCert Inc,
-    # CN=DigiCert TLS RSA SHA256 2020 CA1', 'common_name': 'skyline.github.com',
-    # 'name_value': 'skyline.github.com\nwww.skyline.github.com', 'id': 8383197569,
-    # 'entry_timestamp': '2023-01-10T23:48:41.932', ... }]
-    ```
+print(certificates)
+
+# [{'issuer_ca_id': 185756, 'issuer_name': 'C=US, O=DigiCert Inc,
+# CN=DigiCert TLS RSA SHA256 2020 CA1', 'common_name': 'skyline.github.com',
+# 'name_value': 'skyline.github.com\nwww.skyline.github.com', 'id': 8383197569,
+# 'entry_timestamp': '2023-01-10T23:48:41.932', ... }]
+```
 </details>
 
 <details>
-    <summary>Fetch All Subdomains</summary>
+<summary>Fetch All Subdomains of a given target</summary>
 
-    ```python
-    from reconlib import CRTShAPI
+```python
+from reconlib import CRTShAPI
 
-    CRTShAPI().fetch_subdomains(target="github.com")
-    # {
-    #     'import2.github.com', 'api.security.github.com', 'examregistration.github.com',
-    #     '*.registry.github.com', 'api.stars.github.com', ...
-    # }
-    ```
+subdomains = CRTShAPI().fetch_subdomains(target="github.com")
+
+print(subdomains)
+
+# {
+#     'import2.github.com', 'api.security.github.com', 'examregistration.github.com',
+#     '*.registry.github.com', 'api.stars.github.com', ...
+# }
+```
 </details>
 
 ### Unofficial HackerTarget API
 
 <details>
-    <summary>Perform a request to HackerTarget's API "hostsearch" endpoint</summary>
-
-    ```python
-    from reconlib import HackerTargetAPI
-
-    print(HackerTargetAPI().hostsearch(target="github.com"))
-    # {
-    #     IPv4Address("140.82.121.9"): "lb-140-82-121-9-fra.github.com",
-    #     IPv4Address("192.30.255.117"): "lb-192-30-255-117-sea.github.com",
-    #     IPv4Address("140.82.114.27"): "lb-140-82-114-27-iad.github.com",
-    #     ...
-    # }
-    ```
-</details>
+<summary>Perform a request to HackerTarget's API "hostsearch" endpoint</summary>
 
 ```python
 from reconlib import HackerTargetAPI
 
-print(HackerTargetAPI().fetch_subdomains(target="github.com"))
+hackertarget = HackerTargetAPI()
+
+print(hackertarget.hostsearch(target="github.com"))
 # {
-#     "lb-140-82-121-9-fra.github.com",
-#     "lb-192-30-255-117-sea.github.com",
-#     "lb-140-82-114-27-iad.github.com",
+#     IPv4Address("140.82.121.9"): "lb-140-82-121-9-fra.github.com",
+#     IPv4Address("192.30.255.117"): "lb-192-30-255-117-sea.github.com",
+#     IPv4Address("140.82.114.27"): "lb-140-82-114-27-iad.github.com",
 #     ...
 # }
 
-```
-```python
-print(hacker_target.ip_addresses)
+print(hackertarget.ip_addresses)
 # {
 #     "github.com": {
 #         IPv4Address("140.82.121.9"),
@@ -81,9 +74,27 @@ print(hacker_target.ip_addresses)
 #         ...
 #     }
 # }
+
+print(hackertarget.subdomains)
+# {
+#     "lb-140-82-121-9-fra.github.com",
+#     "lb-192-30-255-117-sea.github.com",
+#     "lb-140-82-114-27-iad.github.com",
+#     ...
+# }
 ```
+</details>
+
+<details>
+<summary>Perform a request to HackerTarget's API "dnslookup" endpoint</summary>
+
 ```python
-print(hacker_target.dnslookup())
+from reconlib import HackerTargetAPI
+
+dnslookup = HackerTargetAPI().dnslookup(target="github.com")
+
+print(dnslookup)
+
 # {
 #     "github.com": {
 #         "A": ["140.82.113.4"],
@@ -97,16 +108,32 @@ print(hacker_target.dnslookup())
 #     }
 # }
 ```
+</details>
+
+<details>
+<summary>Perform a request to HackerTarget's API "reversedns" endpoint</summary>
 
 ```python
-hacker_target = HackerTargetAPI(target="140.82.121.9")
+from reconlib import HackerTargetAPI
 
-print(hacker_target.reverse_dns())
+reverse_dns = HackerTargetAPI().reverse_dns(target="140.82.121.9")
+
+print(reverse_dns)
+
 # {IPv4Address("140.82.121.9"): "lb-140-82-121-9-fra.github.com"}
 ```
+</details>
+
+<details>
+<summary>Perform a request to HackerTarget's API "aslookup" endpoint</summary>
 
 ```python
-print(hacker_target.aslookup())
+from reconlib import HackerTargetAPI
+
+aslookup = HackerTargetAPI().aslookup(target="140.82.121.9")
+
+print(aslookup)
+
 # {
 #     "ASN": 36459,
 #     "IP_ADDRESS": IPv4Address("140.82.121.9"),
@@ -114,22 +141,50 @@ print(hacker_target.aslookup())
 #     "OWNER": "GITHUB, US",
 # }
 ```
+</details>
+
+<details>
+<summary>Fetch All Subdomains of a given target</summary>
+
+```python
+from reconlib import HackerTargetAPI
+
+subdomains = HackerTargetAPI().fetch_subdomains(target="github.com")
+
+print(subdomains)
+
+# {
+#     "lb-140-82-121-9-fra.github.com",
+#     "lb-192-30-255-117-sea.github.com",
+#     "lb-140-82-114-27-iad.github.com",
+#     ...
+# }
+```
+</details>
 
 ### VirusTotal API
-A `virustotal.API`object can be instantiated with the "api_key" attribute
-set to a pre-defined key, but setting it with the "VIRUSTOTAL_API_KEY"
-environment variable is the recommended way to do it before proceeding so hardcoded
-secrets can be completely avoided. ReconLib will detect environment variables
-set directly through a shell or a file.
+A `VirusTotalAPI` object can be instantiated with the "api_key" attribute
+set to a pre-defined value, but setting it with the "VIRUSTOTAL_API_KEY"
+environment variable is the recommended way to do it before proceeding. Setting it up
+like this guarantees hardcoded secrets to be completely avoided. ReconLib will detect
+environment variables set directly through a shell or a file.
+
 ```shell
 EXPORT VIRUSTOTAL_API_KEY="YOUR-VT-API-KEY"
 ```
 
+<details>
+<summary>Fetch All Subdomains of a given target</summary>
+
 ```python
 from reconlib import VirusTotalAPI
 
-domain_info = VirusTotalAPI(target="scanme.nmap.org")
-domain_info.get_subdomains()
+'''An instance of VirusTotalAPI will read the API key value from
+the environment by default. Passing it as an argument in code is
+possible, but not required.'''
+subdomains = VirusTotalAPI().fetch_subdomains(target="scanme.nmap.org")
+
+print(subdomains)
 # {
 #     "ckeepingthechristmasspiritalive365.nmap.org",
 #     "dgbridgedgbridgedgbridge.nmap.org",
@@ -138,3 +193,4 @@ domain_info.get_subdomains()
 #     ...
 # }
 ```
+</details>
