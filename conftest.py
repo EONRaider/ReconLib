@@ -6,17 +6,17 @@ import pytest
 
 
 @pytest.fixture
-def api_key():
+def api_key() -> str:
     return "TOTALLY-LEGIT-API-KEY"
 
 
 @pytest.fixture
-def root_dir():
+def root_dir() -> Path:
     return Path(__file__).parent.absolute()
 
 
 @pytest.fixture
-def crtsh_github_response():
+def crtsh_github_response() -> str:
     return (
         '[{"issuer_ca_id":185756,"issuer_name":"C=US, O=DigiCert Inc, CN=DigiCert '
         'TLS RSA SHA256 2020 CA1","common_name":"skyline.github.com",'
@@ -89,7 +89,7 @@ def crtsh_github_response():
 
 
 @pytest.fixture
-def crtsh_github_domains():
+def crtsh_github_domains() -> set[str]:
     return {
         "skyline.github.com",
         "*.proxima-review-lab.github.com",
@@ -106,7 +106,7 @@ def crtsh_github_domains():
 
 
 @pytest.fixture
-def parsed_crtsh_github_response():
+def parsed_crtsh_github_response() -> dict:
     return {
         "github.com": [
             {
@@ -253,7 +253,7 @@ def parsed_crtsh_github_response():
 
 
 @pytest.fixture
-def hackertarget_hostsearch_github_response():
+def hackertarget_hostsearch_github_response() -> str:
     return (
         "lb-140-82-121-9-fra.github.com,140.82.121.9\n"
         "lb-192-30-255-117-sea.github.com,192.30.255.117\n"
@@ -284,7 +284,7 @@ def hackertarget_github_ip_addresses(
 
 
 @pytest.fixture
-def hackertarget_dnslookup_github_response():
+def hackertarget_dnslookup_github_response() -> str:
     return (
         "A : 140.82.113.4\n"
         "MX : 1 aspmx.l.google.com.\n"
@@ -300,17 +300,17 @@ def hackertarget_dnslookup_github_response():
 
 
 @pytest.fixture
-def hackertarget_reversedns_github_response():
+def hackertarget_reversedns_github_response() -> str:
     return "140.82.121.9 lb-140-82-121-9-fra.github.com"
 
 
 @pytest.fixture
-def hackertarget_aslookup_github_response():
+def hackertarget_aslookup_github_response() -> str:
     return '"140.82.114.27","36459","140.82.114.0/24","GITHUB, US"'
 
 
 @pytest.fixture
-def virustotal_subdomains_nmap_response(root_dir):
+def virustotal_subdomains_nmap_response(root_dir) -> str:
     response_path = "tests/unit/virustotal/virustotal_subdomains_nmap_response.txt"
     with open(root_dir.joinpath(response_path)) as file:
         return file.read()
