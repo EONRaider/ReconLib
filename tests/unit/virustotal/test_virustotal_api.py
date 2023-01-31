@@ -35,33 +35,61 @@ from reconlib.virustotal.api import VirusTotal
 
 class TestVirusTotalAPI:
     def test_set_api_key_from_env(self, api_key, root_dir):
-        # Set API key value directly from environment variable
+        """
+        GIVEN a correctly instantiated object of type VirusTotalAPI
+        WHEN an API key is set as an environment variable with the name
+            "VIRUSTOTAL_API_KEY"
+        THEN this API key must be set as the "api_key" attribute of the
+            VirusTotal instance without exceptions
+        """
         env_api_key = f"{api_key}_from_env"
         os.environ["VIRUSTOTAL_API_KEY"] = env_api_key
         assert VirusTotalAPI().api_key == env_api_key
         os.environ.pop("VIRUSTOTAL_API_KEY", None)  # Cleanup environment
 
     def test_set_api_key_from_init(self, api_key, root_dir):
-        # Set API key at instantiation
+        """
+        GIVEN a correctly instantiated object of type VirusTotalAPI
+        WHEN an API key is set as an argument to the object's constructor
+        THEN this API key must be set as the "api_key" attribute of the
+            VirusTotal instance without exceptions
+        """
         inst_api_key = f"{api_key}_from_instance"
         assert VirusTotalAPI(api_key=inst_api_key).api_key == inst_api_key
-        os.environ.pop("VIRUSTOTAL_API_KEY", None)
 
     def test_set_api_key_from_file(self, api_key, root_dir):
-        # Set API key from a file
+        """
+        GIVEN a correctly instantiated object of type VirusTotalAPI
+        WHEN an API key is set as an environment variable with the name
+            "VIRUSTOTAL_API_KEY" through a correctly formatted text file
+        THEN this API key must be set as the "api_key" attribute of the
+            VirusTotal instance without exceptions
+        """
         api_key_file_path = root_dir.joinpath("tests/unit/virustotal/.test_env")
         with open(api_key_file_path) as file:
             file_api_key = re.search(r"\"(.*)\"", file.read()).group(1)
         assert VirusTotalAPI(api_key=api_key_file_path).api_key == file_api_key
-        os.environ.pop("VIRUSTOTAL_API_KEY", None)
+        os.environ.pop("VIRUSTOTAL_API_KEY", None)  # Cleanup environment
 
     def test_undefined_api_key(self):
+        """
+        GIVEN a correctly instantiated object of type VirusTotalAPI
+        WHEN no API key is set neither as an environment variable nor as
+            an argument passed to the object's constructor
+        THEN an exception of type APIKeyError must be raised
+        """
         with pytest.raises(APIKeyError):
-            # API key not defined neither as an environment variable nor
-            # an instance attribute
             VirusTotalAPI()
 
     def test_headers(self, api_key):
+        """
+        GIVEN a correctly instantiated object of type VirusTotalAPI
+        WHEN an API key has been correctly set as an argument to the
+            object's constructor
+        THEN an "x-apikey" HTTP header containing the API key as a value
+            must be made available for access through the "headers"
+            attribute
+        """
         domain_info = VirusTotalAPI(api_key=api_key)
         assert domain_info.headers == {
             "accept": "application/json",
@@ -69,6 +97,13 @@ class TestVirusTotalAPI:
         }
 
     def test_get_query_url(self, api_key):
+        """
+        GIVEN a correctly instantiated object of type VirusTotalAPI
+        WHEN a string containing a correctly formatted domain is passed
+            as an argument to its get_query_url method
+        THEN a URL for the retrieval of results on VirusTotal must be
+            returned without exceptions
+        """
         target = "nmap.org"
         limit = 1000
         domain_info = VirusTotalAPI(api_key=api_key)
@@ -88,8 +123,15 @@ class TestVirusTotalAPI:
         virustotal_subdomains_nmap_response,
         virustotal_nmap_subdomains,
     ):
-        # Mock API._query_service to prevent an HTTP request from being
-        # made to VirusTotal API
+        """
+        GIVEN a correctly instantiated object of type VirusTotalAPI
+        WHEN a string containing a correctly formatted domain is passed
+            as an argument to its fetch_subdomains method
+        THEN a set of subdomains must be returned by the service without
+            exceptions
+        """
+        # Prevent execution of HTTP requests to external hosts. Present
+        # a response equal to the one returned by the server.
         mocker.patch(
             "reconlib.virustotal.api.VirusTotalAPI._query_service",
             return_value=virustotal_subdomains_nmap_response,

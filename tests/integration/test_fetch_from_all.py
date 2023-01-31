@@ -32,6 +32,13 @@ from reconlib import CRTShAPI, HackerTargetAPI, VirusTotalAPI
 class TestFetchFromAll:
     def test_fetch_all(self, root_dir):
         """
+        GIVEN the execution of this test takes place with the
+            "--external-fetch" flag enabled
+        WHEN connectivity is assured with external hosts
+        THEN the results of all available APIs on ReconLib must be
+            retrieved without errors
+        """
+        """
         Execute a live fetch from all available APIs on ReconLib. This
         test is single-threaded, possibly consumes API usage quotas,
         will perform external HTTP requests and takes several seconds

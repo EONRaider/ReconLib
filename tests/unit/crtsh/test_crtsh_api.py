@@ -28,12 +28,25 @@ from reconlib import CRTShAPI
 
 class TestCRTShAPI:
     def test_init_crtsh_api(self):
+        """
+        GIVEN an instance of type CRTShAPI
+        WHEN no arguments are supplied to its initializer
+        THEN this instance must return all default attributes without
+            exceptions
+        """
         crtsh = CRTShAPI()
         assert crtsh.wildcard is True
         assert crtsh.include_expired is True
         assert crtsh.encoding == "utf_8"
 
     def test_get_query_url(self):
+        """
+        GIVEN a correctly instantiated object of type CRTShAPI
+        WHEN a string containing a correctly formatted domain is passed
+            as an argument to its get_query_url method
+        THEN a URL for the retrieval of results on crt.sh must be
+            returned without exceptions
+        """
         crtsh = CRTShAPI()
         assert (
             crtsh.get_query_url(target="test.domain.abc")
@@ -59,8 +72,15 @@ class TestCRTShAPI:
         parsed_crtsh_github_response,
         crtsh_github_domains,
     ):
-        # Mock API._query_service to prevent an HTTP request from being
-        # made to crt.sh when calling API.fetch
+        """
+        GIVEN a correctly instantiated object of type CRTShAPI
+        WHEN a string containing a correctly formatted domain is passed
+            as an argument to its fetch_certificates method
+        THEN a string representing the service's response must be
+            returned, parsed and processed into results
+        """
+        # Prevent execution of HTTP requests to external hosts. Present
+        # a response equal to the one returned by the server.
         mocker.patch(
             "reconlib.crtsh.api.CRTShAPI._query_service",
             return_value=crtsh_github_response,
@@ -75,8 +95,15 @@ class TestCRTShAPI:
     def test_fetch_subdomains(
         self, mocker, crtsh_github_response, crtsh_github_domains
     ):
-        # Mock API._query_service to prevent an HTTP request from being
-        # made to crt.sh when calling API.fetch
+        """
+        GIVEN a correctly instantiated object of type CRTShAPI
+        WHEN a string containing a correctly formatted domain is passed
+            as an argument to its fetch_subdomains method
+        THEN a set of subdomains must be returned by the service without
+            exceptions
+        """
+        # Prevent execution of HTTP requests to external hosts. Present
+        # a response equal to the one returned by the server.
         mocker.patch(
             "reconlib.crtsh.api.CRTShAPI._query_service",
             return_value=crtsh_github_response,
