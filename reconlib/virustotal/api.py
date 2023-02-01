@@ -93,7 +93,7 @@ class VirusTotalAPI(AuthenticatedExternalService):
         """
         return urlunparse(
             (
-                (url := VirusTotal.URL.value).scheme,
+                (url := VirusTotal.URL.value)[0],
                 url.netloc,
                 f"{url.path}/{endpoint.value.format(target)}",
                 "",
