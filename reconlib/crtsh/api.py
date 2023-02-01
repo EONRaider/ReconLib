@@ -25,8 +25,17 @@ Contact: https://www.twitter.com/eon_raider
 
 import json
 from collections import defaultdict
+from enum import Enum
 
 from reconlib.core.base import ExternalService
+
+
+class CRTSh(Enum):
+    """
+    Enumeration of API endpoints made available by CRTSh
+    """
+
+    URL = "https://crt.sh"
 
 
 class CRTShAPI(ExternalService):
@@ -36,7 +45,6 @@ class CRTShAPI(ExternalService):
         user_agent: str = None,
         wildcard: bool = True,
         include_expired: bool = True,
-        crtsh_url: str = "https://crt.sh",
         encoding: str = "utf_8",
     ):
         """
@@ -50,13 +58,11 @@ class CRTShAPI(ExternalService):
             the crt.sh service (defaults to True)
         :param include_expired: Include expired certificates in search
             results (defaults to True)
-        :param crtsh_url: URL assigned to the crt.sh service
         :param encoding: Encoding used on responses provided by crt.sh
         """
         super().__init__(user_agent, encoding)
         self.wildcard = wildcard
         self.include_expired = include_expired
-        self.crtsh_url = crtsh_url
         self.subdomains = defaultdict(set)
         self.results = defaultdict(dict)
 
@@ -75,7 +81,7 @@ class CRTShAPI(ExternalService):
             f"%.{target}" if "%" not in target and self.wildcard is True else target
         )
 
-        url = f"{self.crtsh_url}/?q={target}&output=json"
+        url = f"{CRTSh.URL.value}/?q={target}&output=json"
 
         if self.include_expired is False:
             url = f"{url}&exclude=expired"

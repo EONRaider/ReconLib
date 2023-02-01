@@ -76,8 +76,8 @@ class HackerTargetAPI(ExternalService):
         """
         return urlunparse(
             (
-                HackerTarget.URL.value.scheme,
-                HackerTarget.URL.value.netloc,
+                HackerTarget.URL.value[0],
+                HackerTarget.URL.value[1],
                 f"{endpoint.value}/",
                 "",
                 urlencode(params) if params else "",
