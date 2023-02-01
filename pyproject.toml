@@ -1,16 +1,16 @@
 [tool.poetry]
 name = "reconlib"
-version = "0.3.0"
+version = "0.4.0"
 description = "A collection of modules and helpers for active and passive reconnaissance of remote hosts"
 authors = ["eonraider <livewire_voodoo@protonmail.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.10"
-pytest = "^7.2.1"
-pytest-mock = "^3.10.0"
 python-dotenv = "^0.21.1"
 
-[tool.poetry.dev-dependencies]
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.2.1"
+pytest-mock = "^3.10.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

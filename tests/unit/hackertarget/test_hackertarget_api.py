@@ -34,6 +34,13 @@ from reconlib.hackertarget.api import HackerTarget
 
 class TestHackerTargetAPI:
     def test_get_query_url(self, api_key):
+        """
+        GIVEN a correctly instantiated object of type HackerTargetAPI
+        WHEN a string containing a correctly formatted domain is passed
+            as an argument to its get_query_url method
+        THEN a URL for the retrieval of results on HackerTarget must be
+            returned without exceptions
+        """
         domain_info = HackerTargetAPI()
         assert (
             domain_info.get_query_url(endpoint=HackerTarget.HOSTSEARCH)
@@ -55,8 +62,16 @@ class TestHackerTargetAPI:
         hackertarget_github_subdomains,
         hackertarget_github_ip_addresses,
     ):
-        # Mock API._query_service to prevent an HTTP request from being
-        # made to api.hackertarget.com
+        """
+        GIVEN a correctly instantiated object of type HackerTargetAPI
+        WHEN a string containing a correctly formatted domain is passed
+            as an argument to its hostsearch method
+        THEN a dictionary mapping IP addresses to domain names derived
+            from the results produced by HackerTarget must be returned
+            without exceptions
+        """
+        # Prevent execution of HTTP requests to external hosts. Present
+        # a response equal to the one returned by the server.
         mocker.patch(
             "reconlib.hackertarget.api.HackerTargetAPI._query_service",
             return_value=hackertarget_hostsearch_github_response,
@@ -82,8 +97,15 @@ class TestHackerTargetAPI:
         hackertarget_hostsearch_github_response,
         hackertarget_github_subdomains,
     ):
-        # Mock API._query_service to prevent an HTTP request from being
-        # made to api.hackertarget.com
+        """
+        GIVEN a correctly instantiated object of type HackerTargetAPI
+        WHEN a string containing a correctly formatted domain is passed
+            as an argument to its fetch_subdomains method
+        THEN a set of subdomains must be returned by the service without
+            exceptions
+        """
+        # Prevent execution of HTTP requests to external hosts. Present
+        # a response equal to the one returned by the server.
         mocker.patch(
             "reconlib.hackertarget.api.HackerTargetAPI._query_service",
             return_value=hackertarget_hostsearch_github_response,
@@ -95,8 +117,15 @@ class TestHackerTargetAPI:
         )
 
     def test_dns_lookup(self, mocker, hackertarget_dnslookup_github_response):
-        # Mock API._query_service to prevent an HTTP request from being
-        # made to api.hackertarget.com
+        """
+        GIVEN a correctly instantiated object of type HackerTargetAPI
+        WHEN a string containing a correctly formatted domain is passed
+            as an argument to its dnslookup method
+        THEN a set of subdomains must be returned by the service without
+            exceptions
+        """
+        # Prevent execution of HTTP requests to external hosts. Present
+        # a response equal to the one returned by the server.
         mocker.patch(
             "reconlib.hackertarget.api.HackerTargetAPI._query_service",
             return_value=hackertarget_dnslookup_github_response,
@@ -123,8 +152,15 @@ class TestHackerTargetAPI:
         }
 
     def test_reverse_dns(self, mocker, hackertarget_reversedns_github_response):
-        # Mock API._query_service to prevent an HTTP request from being
-        # made to api.hackertarget.com
+        """
+        GIVEN a correctly instantiated object of type HackerTargetAPI
+        WHEN a string containing a correctly formatted domain is passed
+            as an argument to its reversedns method
+        THEN a set of subdomains must be returned by the service without
+            exceptions
+        """
+        # Prevent execution of HTTP requests to external hosts. Present
+        # a response equal to the one returned by the server.
         mocker.patch(
             "reconlib.hackertarget.api.HackerTargetAPI._query_service",
             return_value=hackertarget_reversedns_github_response,
@@ -134,7 +170,13 @@ class TestHackerTargetAPI:
         }
 
     def test_invalid_reverse_dns(self):
-        invalid_target = "github.com"
+        """
+        GIVEN a correctly instantiated object of type HackerTargetAPI
+        WHEN a string that does not contain an IP address is passed as
+            an argument to its reversedns method
+        THEN an exception of type InvalidTargetError must be raised
+        """
+        invalid_target = "NOT-AN-IP-ADDRESS"
         with pytest.raises(InvalidTargetError) as e:
             HackerTargetAPI().reverse_dns(target=invalid_target)
         assert (
@@ -144,8 +186,15 @@ class TestHackerTargetAPI:
         assert e.value.code == 1
 
     def test_aslookup(self, mocker, hackertarget_aslookup_github_response):
-        # Mock API._query_service to prevent an HTTP request from being
-        # made to api.hackertarget.com
+        """
+        GIVEN a correctly instantiated object of type HackerTargetAPI
+        WHEN a string containing a correctly formatted domain is passed
+            as an argument to its aslookup method
+        THEN a set of subdomains must be returned by the service without
+            exceptions
+        """
+        # Prevent execution of HTTP requests to external hosts. Present
+        # a response equal to the one returned by the server.
         mocker.patch(
             "reconlib.hackertarget.api.HackerTargetAPI._query_service",
             return_value=hackertarget_aslookup_github_response,
@@ -164,7 +213,13 @@ class TestHackerTargetAPI:
         }
 
     def test_invalid_aslookup(self):
-        invalid_target = "github.com"
+        """
+        GIVEN a correctly instantiated object of type HackerTargetAPI
+        WHEN a string that does not contain an IP address is passed as
+            an argument to its aslookup method
+        THEN an exception of type InvalidTargetError must be raised
+        """
+        invalid_target = "NOT-AN-IP-ADDRESS"
         with pytest.raises(InvalidTargetError) as e:
             HackerTargetAPI().aslookup(target=invalid_target)
         assert (
