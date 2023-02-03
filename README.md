@@ -185,7 +185,7 @@ from reconlib import VirusTotalAPI
 '''An instance of VirusTotalAPI will read the API key value from
 the environment by default. Passing it as an argument in code is
 possible, but not required.'''
-subdomains = VirusTotalAPI().fetch_subdomains(target="scanme.nmap.org")
+subdomains = VirusTotalAPI().fetch_subdomains(target="nmap.org")
 
 print(subdomains)
 # {
