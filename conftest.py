@@ -1,4 +1,5 @@
 import json
+import os
 from ipaddress import IPv4Address
 from pathlib import Path
 
@@ -25,6 +26,13 @@ def pytest_runtest_setup(item) -> None:
 @pytest.fixture
 def api_key() -> str:
     return "TOTALLY-LEGIT-API-KEY"
+
+
+@pytest.fixture()
+def setup_virustotal_api_key(api_key):
+    os.environ["VIRUSTOTAL_API_KEY"] = api_key
+    yield
+    os.environ.pop(api_key, None)
 
 
 @pytest.fixture

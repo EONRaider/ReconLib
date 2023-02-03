@@ -34,7 +34,7 @@ from reconlib.virustotal.api import VirusTotal
 
 
 class TestVirusTotalAPI:
-    def test_set_api_key_from_env(self, api_key, root_dir):
+    def test_set_api_key_from_env(self, api_key, root_dir, setup_virustotal_api_key):
         """
         GIVEN a correctly instantiated object of type VirusTotalAPI
         WHEN an API key is set as an environment variable with the name
@@ -42,10 +42,7 @@ class TestVirusTotalAPI:
         THEN this API key must be set as the "api_key" attribute of the
             VirusTotal instance without exceptions
         """
-        env_api_key = f"{api_key}_from_env"
-        os.environ["VIRUSTOTAL_API_KEY"] = env_api_key
-        assert VirusTotalAPI().api_key == env_api_key
-        os.environ.pop("VIRUSTOTAL_API_KEY", None)  # Cleanup environment
+        assert VirusTotalAPI().api_key == api_key
 
     def test_set_api_key_from_init(self, api_key, root_dir):
         """

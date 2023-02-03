@@ -34,7 +34,7 @@ class TestFetchFromAll:
         """
         GIVEN the execution of this test takes place with the
             "--external-fetch" flag enabled
-        WHEN connectivity is assured with external hosts
+        WHEN connectivity to external hosts is guaranteed
         THEN the results of all available APIs on ReconLib must be
             retrieved without errors
         """
