@@ -39,6 +39,10 @@ class ExternalService(ABC):
         self.user_agent = user_agent
         self.encoding = encoding
 
+    def __repr__(self):
+        attrs = (f"{attr}={value}" for attr, value in self.__dict__.items())
+        return f"{self.__class__.__name__}({', '.join(attrs)})"
+
     @abstractmethod
     def get_query_url(self, *args, **kwargs) -> str:
         """
@@ -119,7 +123,7 @@ class AuthenticatedExternalService(ExternalService, ABC):
                 raise APIKeyError(
                     f"An API key is required when retrieving information from "
                     f"VirusTotal. Either initialize an API object with the 'api_key' "
-                    f"attribute or set a '{self.api_key_env_name}' environment"
+                    f"attribute or set a '{self.api_key_env_name}' environment "
                     f"variable with the appropriate value."
                 )
             self._api_key = api_key
