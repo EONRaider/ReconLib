@@ -94,7 +94,7 @@ class VirusTotalAPI(AuthenticatedExternalService):
         return urlunparse(
             (
                 (url := VirusTotal.URL.value)[0],
-                url.netloc,
+                (url := VirusTotal.URL.value)[1],
                 f"{url.path}/{endpoint.value.format(target)}",
                 "",
                 urlencode(params) if params else "",
