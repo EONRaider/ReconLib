@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "reconlib"
-version = "0.4.2"
+version = "0.4.3"
 description = "A collection of modules and helpers for active and passive reconnaissance of remote hosts"
 authors = ["eonraider <livewire_voodoo@protonmail.com>"]
 
