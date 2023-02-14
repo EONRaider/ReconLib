@@ -34,3 +34,8 @@ class InvalidTargetError(ReconLibException):
 class APIKeyError(ReconLibException):
     def __init__(self, message: str, code: int = 1):
         super().__init__(f"{self.__class__.__name__}: {message}", code)
+
+
+class APIQuotaUsageError(ReconLibException):
+    def __init__(self, message: str, code: int = 1):
+        super().__init__(f"{self.__class__.__name__}: {message}", code)
