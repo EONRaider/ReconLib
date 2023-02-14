@@ -24,10 +24,12 @@ Contact: https://www.twitter.com/eon_raider
 """
 
 import json
+import urllib.error
 from collections import defaultdict
 from enum import Enum
 
 from reconlib.core.base import ExternalService
+from reconlib.core.exceptions import APIQuotaUsageError
 
 
 class CRTSh(Enum):
@@ -98,7 +100,15 @@ class CRTShAPI(ExternalService):
         certificate information of a subdomain known by crt.sh to
         belong to the target domain
         """
-        response = json.loads(self._query_service(url=self.get_query_url(target)))
+        try:
+            response = json.loads(self._query_service(url=self.get_query_url(target)))
+        except urllib.error.HTTPError as e:
+            if e.code == 403:
+                raise APIQuotaUsageError(
+                    f"{self.__class__.__name__} is refusing to respond to requests "
+                    f"(possibly due to usage quota restrictions). Try again later..."
+                )
+            raise e
         self.results[target] = response
         self.subdomains[target].update(host["common_name"] for host in response)
         return response

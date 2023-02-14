@@ -180,7 +180,7 @@ class TestHackerTargetAPI:
         with pytest.raises(InvalidTargetError) as e:
             HackerTargetAPI().reverse_dns(target=invalid_target)
         assert (
-            str(e.value.message) == f"InvalidTargetError: '{invalid_target}' does not "
+            str(e.value.args[0]) == f"InvalidTargetError: '{invalid_target}' does not "
             f"appear to be an IPv4 or IPv6 address"
         )
         assert e.value.code == 1
@@ -223,7 +223,7 @@ class TestHackerTargetAPI:
         with pytest.raises(InvalidTargetError) as e:
             HackerTargetAPI().aslookup(target=invalid_target)
         assert (
-            str(e.value.message) == f"InvalidTargetError: '{invalid_target}' does not "
+            str(e.value.args[0]) == f"InvalidTargetError: '{invalid_target}' does not "
             f"appear to be an IPv4 or IPv6 address"
         )
         assert e.value.code == 1
