@@ -23,7 +23,12 @@ Contact: https://www.twitter.com/eon_raider
     <https://github.com/EONRaider/ReconLib/blob/master/LICENSE>.
 """
 
+import urllib.error
+
+import pytest
+
 from reconlib import CRTShAPI
+from reconlib.core.exceptions import APIQuotaUsageError
 
 
 class TestCRTShAPI:
@@ -110,3 +115,30 @@ class TestCRTShAPI:
         )
 
         assert CRTShAPI().fetch_subdomains(target="github.com") == crtsh_github_domains
+
+    def test_fetch_certificates_403_error(self, mocker):
+        """
+        GIVEN a correctly instantiated object of type CRTShAPI
+        WHEN a string containing a correctly formatted domain is passed
+            as an argument to its fetch_certificates method but the
+            service responds with an HTTP 403 error code
+        THEN a APIQuotaUsageError exception must be raised
+        """
+        # Prevent execution of HTTP requests to external hosts. Raise
+        # a urllib.error.HTTPError exception that triggers a
+        # APIQuotaUsageError exception from ReconLib
+        mocker.patch(
+            "reconlib.crtsh.api.CRTShAPI._query_service",
+            side_effect=urllib.error.HTTPError(
+                msg="Error", code=403, fp=None, hdrs=None, url="github.com"
+            ),
+        )
+
+        with pytest.raises(APIQuotaUsageError) as e:
+            CRTShAPI().fetch_certificates(target="github.com")
+
+        assert (
+            e.value.args[0]
+            == "APIQuotaUsageError: CRTShAPI is refusing to respond to requests "
+            "(possibly due to usage quota restrictions). Try again later..."
+        )
