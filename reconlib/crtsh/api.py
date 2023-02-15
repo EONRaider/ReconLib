@@ -41,6 +41,8 @@ class CRTSh(Enum):
 
 
 class CRTShAPI(ExternalService):
+    service_name = "CRTSh"
+
     def __init__(
         self,
         *,

@@ -47,6 +47,8 @@ class HackerTarget(Enum):
 
 
 class HackerTargetAPI(ExternalService):
+    service_name = "HackerTarget"
+
     def __init__(self, *, user_agent: str = None, encoding: str = "utf_8"):
         """
         Wrapper for HTTP requests to the API of HackerTarget

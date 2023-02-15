@@ -35,6 +35,8 @@ from reconlib.core.utils.user_agents import random_user_agent
 
 
 class ExternalService(ABC):
+    service_name = "Undefined"
+
     def __init__(self, user_agent: str, encoding: str):
         self.user_agent = user_agent
         self.encoding = encoding
