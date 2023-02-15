@@ -44,6 +44,8 @@ class VirusTotal(Enum):
 
 
 class VirusTotalAPI(AuthenticatedExternalService):
+    service_name = "VirusTotal"
+
     def __init__(
         self,
         *,
